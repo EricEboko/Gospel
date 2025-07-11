@@ -60,6 +60,7 @@ logger = logging.getLogger(__name__)
 @app.on_event("startup")
 async def startup_db_client():
     logger.info("Starting GospelSpot API server...")
+    await database.connect()
     logger.info("Database connection established")
 
 @app.on_event("shutdown")
