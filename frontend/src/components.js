@@ -1,7 +1,513 @@
 import React, { useState, useEffect } from 'react';
 
-// Enhanced mock data with more comprehensive features
+// Enhanced mock data with actual audio URLs and translation management
 const mockData = {
+  subscriptionPlans: [
+    {
+      id: 'free',
+      name: 'Free',
+      price: 0,
+      currency: 'USD',
+      interval: 'month',
+      features: [
+        'Shuffle play only',
+        'Ads between songs',
+        '6 skips per hour',
+        'Standard audio quality',
+        'Basic playlists (5 max)',
+        'Limited offline (0 songs)'
+      ],
+      limitations: {
+        skipsPerHour: 6,
+        maxPlaylists: 5,
+        offlineDownloads: 0,
+        audioQuality: 'standard',
+        hasAds: true,
+        shuffleOnly: true
+      },
+      color: 'gray',
+      popular: false
+    },
+    {
+      id: 'premium',
+      name: 'Premium',
+      price: 9.99,
+      currency: 'USD',
+      interval: 'month',
+      features: [
+        'Ad-free listening',
+        'Unlimited skips',
+        'High-quality audio',
+        'Offline downloads (10,000 songs)',
+        'Unlimited playlists',
+        'Play any song on demand',
+        'Lyrics display'
+      ],
+      limitations: {
+        skipsPerHour: -1,
+        maxPlaylists: -1,
+        offlineDownloads: 10000,
+        audioQuality: 'high',
+        hasAds: false,
+        shuffleOnly: false
+      },
+      color: 'blue',
+      popular: true
+    },
+    {
+      id: 'family',
+      name: 'Family',
+      price: 14.99,
+      currency: 'USD',
+      interval: 'month',
+      features: [
+        'All Premium features',
+        'Up to 6 family accounts',
+        'Kid-safe mode',
+        'Individual libraries',
+        'Family sharing',
+        'Parental controls',
+        'Church event calendar'
+      ],
+      limitations: {
+        skipsPerHour: -1,
+        maxPlaylists: -1,
+        offlineDownloads: 10000,
+        audioQuality: 'high',
+        hasAds: false,
+        shuffleOnly: false,
+        familyAccounts: 6
+      },
+      color: 'purple',
+      popular: false
+    },
+    {
+      id: 'student',
+      name: 'Student',
+      price: 4.99,
+      currency: 'USD',
+      interval: 'month',
+      features: [
+        'All Premium features',
+        'Student discount (50% off)',
+        'Verification required',
+        'Study playlists',
+        'Focus mode',
+        'Academic resources'
+      ],
+      limitations: {
+        skipsPerHour: -1,
+        maxPlaylists: -1,
+        offlineDownloads: 10000,
+        audioQuality: 'high',
+        hasAds: false,
+        shuffleOnly: false,
+        requiresVerification: true
+      },
+      color: 'green',
+      popular: false
+    }
+  ],
+  users: [
+    {
+      id: 1,
+      name: 'John Smith',
+      email: 'john@example.com',
+      password: 'hashed_password_123',
+      subscription: 'premium',
+      joinDate: '2024-01-15',
+      lastActive: '2025-07-11',
+      status: 'active',
+      paymentMethod: 'Credit Card',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      role: 'user',
+      language: 'en',
+      country: 'USA',
+      stats: {
+        songsPlayed: 1250,
+        playlistsCreated: 8,
+        hoursListened: 89
+      }
+    },
+    {
+      id: 2,
+      name: 'SuperAdmin',
+      email: 'admin@gospelspot.com',
+      password: 'admin123',
+      subscription: 'premium',
+      joinDate: '2023-01-01',
+      lastActive: '2025-07-11',
+      status: 'active',
+      paymentMethod: null,
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      role: 'superadmin',
+      language: 'en',
+      country: 'USA',
+      stats: {
+        songsPlayed: 0,
+        playlistsCreated: 0,
+        hoursListened: 0
+      }
+    },
+    {
+      id: 3,
+      name: 'Brandon Lake',
+      email: 'brandon@example.com',
+      password: 'artist123',
+      subscription: 'premium',
+      joinDate: '2024-03-01',
+      lastActive: '2025-07-11',
+      status: 'active',
+      paymentMethod: 'Credit Card',
+      avatar: 'https://images.unsplash.com/photo-1602022578288-5824e225738f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85',
+      role: 'artist',
+      language: 'en',
+      country: 'USA',
+      stats: {
+        songsPlayed: 0,
+        playlistsCreated: 0,
+        hoursListened: 0,
+        artistStats: {
+          totalStreams: 2400000,
+          monthlyListeners: 450000,
+          topSong: "That's Who I Praise",
+          totalAlbums: 3,
+          followers: 2400000
+        }
+      }
+    }
+  ],
+  // Enhanced songs with actual audio URLs
+  songs: [
+    {
+      id: 1,
+      title: "That's Who I Praise",
+      artist: "Brandon Lake",
+      album: "King of Hearts",
+      duration: "3:45",
+      audioUrl: "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav", // Sample audio
+      image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
+    },
+    {
+      id: 2,
+      title: "Hard Fought Hallelujah",
+      artist: "Brandon Lake",
+      album: "King of Hearts",
+      duration: "4:12",
+      audioUrl: "https://www.soundjay.com/misc/sounds/bell-ringing-04.wav", // Sample audio
+      image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
+    },
+    {
+      id: 3,
+      title: "No Fear",
+      artist: "Jon Reddick",
+      album: "No Fear",
+      duration: "3:56",
+      audioUrl: "https://www.soundjay.com/misc/sounds/bell-ringing-03.wav", // Sample audio
+      image: "https://images.pexels.com/photos/7520077/pexels-photo-7520077.jpeg",
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
+    },
+    {
+      id: 4,
+      title: "Святой Бог",
+      artist: "Hillsong Русский",
+      album: "Поклонение",
+      duration: "4:23",
+      audioUrl: "https://www.soundjay.com/misc/sounds/bell-ringing-02.wav", // Sample audio
+      image: "https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
+      language: "Russian",
+      country: "Russia",
+      category: "Worship"
+    },
+    {
+      id: 5,
+      title: "Oh Death",
+      artist: "MercyMe",
+      album: "Wonder & Awe",
+      duration: "4:23",
+      audioUrl: "https://www.soundjay.com/misc/sounds/bell-ringing-01.wav", // Sample audio
+      image: "https://images.pexels.com/photos/7520079/pexels-photo-7520079.jpeg",
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
+    }
+  ],
+  // Translation management system
+  translations: {
+    en: {
+      // All the original English translations
+      home: "Home",
+      search: "Search",
+      library: "Your Library",
+      createPlaylist: "Create Playlist",
+      likedSongs: "Liked Songs",
+      recentlyPlayed: "Recently played",
+      madeForYou: "Made for you",
+      newReleases: "New releases",
+      topArtists: "Top artists",
+      showAll: "Show all",
+      playAll: "Play all",
+      followers: "followers",
+      play: "Play",
+      pause: "Pause",
+      addToPlaylist: "Add to Playlist",
+      createNewPlaylist: "Create New Playlist",
+      selectPlaylist: "Select Playlist",
+      // ... all other English translations
+    },
+    es: {
+      // Spanish translations (can be edited in admin)
+      home: "Inicio",
+      search: "Buscar",
+      library: "Tu biblioteca",
+      createPlaylist: "Crear lista",
+      likedSongs: "Canciones favoritas",
+      addToPlaylist: "Agregar a lista",
+      createNewPlaylist: "Crear nueva lista",
+      selectPlaylist: "Seleccionar lista",
+      // ... all other Spanish translations
+    },
+    ru: {
+      // Russian translations (can be edited in admin)
+      home: "Главная",
+      search: "Поиск",
+      library: "Ваша библиотека",
+      createPlaylist: "Создать плейлист",
+      likedSongs: "Любимые песни",
+      addToPlaylist: "Добавить в плейлист",
+      createNewPlaylist: "Создать новый плейлист",
+      selectPlaylist: "Выбрать плейлист",
+      // ... all other Russian translations
+    }
+    // ... other languages
+  },
+  analytics: {
+    totalUsers: 12543,
+    premiumUsers: 4821,
+    freeUsers: 7722,
+    revenue: 52348.67,
+    songsStreamed: 892145,
+    hoursListened: 45623,
+    topGenres: [
+      { name: 'Contemporary Christian', percentage: 35, streams: 312051, countries: ['USA', 'Canada', 'UK'] },
+      { name: 'Worship', percentage: 28, streams: 249881, countries: ['USA', 'Brazil', 'Australia'] },
+      { name: 'Gospel', percentage: 22, streams: 196272, countries: ['USA', 'Nigeria', 'South Africa'] },
+      { name: 'Christian Rock', percentage: 15, streams: 133822, countries: ['USA', 'Germany', 'Canada'] }
+    ],
+    revenueByPlan: [
+      { plan: 'Premium', revenue: 28456.32, users: 2847 },
+      { plan: 'Family', revenue: 19823.45, users: 1321 },
+      { plan: 'Student', revenue: 4068.90, users: 815 }
+    ],
+    growthMetrics: {
+      userGrowth: 15.2,
+      revenueGrowth: 23.8,
+      retentionRate: 87.5
+    },
+    usersByCountry: [
+      { country: 'USA', users: 5234, percentage: 42 },
+      { country: 'Brazil', users: 2156, percentage: 17 },
+      { country: 'Nigeria', users: 1876, percentage: 15 },
+      { country: 'UK', users: 1245, percentage: 10 },
+      { country: 'Canada', users: 987, percentage: 8 },
+      { country: 'Others', users: 1045, percentage: 8 }
+    ]
+  },
+  featuredPlaylists: [
+    {
+      id: 1,
+      name: "Contemporary Christian Hits",
+      description: "The biggest contemporary Christian songs right now",
+      image: "https://images.unsplash.com/photo-1507692049790-de58290a4334?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
+      songs: [1, 2, 3], // References to song IDs
+      followers: 1250000,
+      isPublic: true,
+      createdBy: "GospelSpot",
+      tags: ["contemporary", "worship", "praise"],
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
+    },
+    {
+      id: 2,
+      name: "Worship Essentials",
+      description: "Essential worship songs for your spiritual journey",
+      image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
+      songs: [3, 4, 5], // References to song IDs
+      followers: 890000,
+      isPublic: true,
+      createdBy: "GospelSpot",
+      tags: ["worship", "spiritual", "praise"],
+      language: "English",
+      country: "USA",
+      category: "Worship"
+    },
+    {
+      id: 3,
+      name: "Gospel Classics",
+      description: "Timeless gospel songs that never get old",
+      image: "https://images.pexels.com/photos/8815036/pexels-photo-8815036.jpeg",
+      songs: [1, 3, 5], // References to song IDs
+      followers: 750000,
+      isPublic: true,
+      createdBy: "GospelSpot",
+      tags: ["traditional", "gospel", "classic"],
+      language: "English",
+      country: "USA",
+      category: "Gospel"
+    },
+    {
+      id: 4,
+      name: "Хвала и Поклонение",
+      description: "Русские христианские песни для поклонения",
+      image: "https://images.unsplash.com/photo-1602022578288-5824e225738f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
+      songs: [4], // References to song IDs
+      followers: 450000,
+      isPublic: true,
+      createdBy: "GospelSpot",
+      tags: ["worship", "russian", "praise"],
+      language: "Russian",
+      country: "Russia",
+      category: "Worship"
+    }
+  ],
+  newReleases: [
+    {
+      id: 1,
+      title: "King of Hearts",
+      artist: "Brandon Lake",
+      image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
+      year: "2025",
+      type: "Album",
+      genre: "Contemporary Christian",
+      description: "Brandon Lake's powerful new album featuring chart-topping hits",
+      tracks: 12,
+      duration: "45:30",
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian",
+      songs: [1, 2] // References to song IDs
+    },
+    {
+      id: 2,
+      title: "Sons of Sunday",
+      artist: "Sons of Sunday",
+      image: "https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
+      year: "2025",
+      type: "Album",
+      genre: "Worship",
+      description: "Self-titled debut album by the worship collective",
+      tracks: 10,
+      duration: "38:45",
+      language: "English",
+      country: "USA",
+      category: "Worship",
+      songs: [3, 5] // References to song IDs
+    },
+    {
+      id: 3,
+      title: "Величие Христа",
+      artist: "Bethel Русский",
+      image: "https://images.unsplash.com/photo-1669198074199-5f58e548974e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwzfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
+      year: "2025",
+      type: "Album",
+      genre: "Worship",
+      description: "Русскоязычный альбом прославления",
+      tracks: 8,
+      duration: "32:15",
+      language: "Russian",
+      country: "Russia",
+      category: "Worship",
+      songs: [4] // References to song IDs
+    }
+  ],
+  topArtists: [
+    {
+      id: 1,
+      name: "Brandon Lake",
+      image: "https://images.unsplash.com/photo-1602022578288-5824e225738f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
+      followers: "2.4M",
+      genre: "Contemporary Christian",
+      monthlyListeners: "5.2M",
+      verified: true,
+      bio: "Contemporary Christian music artist known for powerful worship songs",
+      topSongs: ["That's Who I Praise", "Hard Fought Hallelujah", "Gratitude"],
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian",
+      songs: [1, 2] // References to song IDs
+    },
+    {
+      id: 2,
+      name: "MercyMe",
+      image: "https://images.pexels.com/photos/54333/person-clinic-cross-religion-54333.jpeg",
+      followers: "1.8M",
+      genre: "Contemporary Christian",
+      monthlyListeners: "3.9M",
+      verified: true,
+      bio: "Multi-platinum selling Christian rock band",
+      topSongs: ["Oh Death", "Sing (Like You've Already Won)", "I Can Only Imagine"],
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian",
+      songs: [5] // References to song IDs
+    },
+    {
+      id: 3,
+      name: "Hillsong Русский",
+      image: "https://images.pexels.com/photos/415571/pexels-photo-415571.jpeg",
+      followers: "892K",
+      genre: "Worship",
+      monthlyListeners: "1.7M",
+      verified: true,
+      bio: "Русскоязычное поклонение и прославление",
+      topSongs: ["Святой Бог", "Великий Я Есть", "Иисус культура"],
+      language: "Russian",
+      country: "Russia",
+      category: "Worship",
+      songs: [4] // References to song IDs
+    }
+  ],
+  recentlyPlayed: [
+    { songId: 1, playedAt: "2 hours ago" },
+    { songId: 3, playedAt: "5 hours ago" },
+    { songId: 4, playedAt: "1 day ago" }
+  ],
+  genres: [
+    { id: 1, name: 'Contemporary Christian', color: 'bg-blue-600', image: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85' },
+    { id: 2, name: 'Gospel', color: 'bg-yellow-600', image: 'https://images.pexels.com/photos/8815036/pexels-photo-8815036.jpeg' },
+    { id: 3, name: 'Worship', color: 'bg-purple-600', image: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85' },
+    { id: 4, name: 'Christian Rock', color: 'bg-red-600', image: 'https://images.unsplash.com/photo-1602022578288-5824e225738f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85' },
+    { id: 5, name: 'Christian Hip-Hop', color: 'bg-green-600', image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85' },
+    { id: 6, name: 'Praise & Worship', color: 'bg-indigo-600', image: 'https://images.pexels.com/photos/1666816/pexels-photo-1666816.jpeg' },
+    { id: 7, name: 'Southern Gospel', color: 'bg-orange-600', image: 'https://images.pexels.com/photos/7520079/pexels-photo-7520079.jpeg' },
+    { id: 8, name: 'Christian Folk', color: 'bg-teal-600', image: 'https://images.pexels.com/photos/54333/person-clinic-cross-religion-54333.jpeg' },
+    { id: 9, name: 'Christian Pop', color: 'bg-pink-600', image: 'https://images.pexels.com/photos/415571/pexels-photo-415571.jpeg' },
+    { id: 10, name: 'Hymns', color: 'bg-gray-600', image: 'https://images.unsplash.com/photo-1669198074199-5f58e548974e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwzfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85' },
+    { id: 11, name: 'Russian Worship', color: 'bg-red-800', image: 'https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85' },
+    { id: 12, name: 'Christian Country', color: 'bg-amber-600', image: 'https://images.pexels.com/photos/7520077/pexels-photo-7520077.jpeg' }
+  ],
+  countries: ['USA', 'Brazil', 'Nigeria', 'UK', 'Canada', 'Russia', 'Germany', 'Australia', 'South Africa', 'Mexico'],
+  languages: ['English', 'Spanish', 'Portuguese', 'Russian', 'French', 'German', 'Italian']
+};
+
+// Helper function to get song by ID
+const getSongById = (id) => {
+  return mockData.songs.find(song => song.id === id);
+};
+
+// Helper function to get songs by IDs
+const getSongsByIds = (ids) => {
+  return ids.map(id => getSongById(id)).filter(Boolean);
+};
   subscriptionPlans: [
     {
       id: 'free',
