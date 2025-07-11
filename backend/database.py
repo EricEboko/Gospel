@@ -3,7 +3,7 @@ from typing import Optional, List, Dict, Any
 import os
 from datetime import datetime
 
-from .models import User, Artist, Song, UserCreate, UserUpdate, ArtistCreate, ArtistUpdate, SongCreate, SongUpdate
+from models import User, Artist, Song, UserCreate, UserUpdate, ArtistCreate, ArtistUpdate, SongCreate, SongUpdate
 
 class Database:
     def __init__(self):
