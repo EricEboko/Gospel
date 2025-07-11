@@ -264,7 +264,7 @@ class GospelSpotAPITester:
             return
         
         new_user_data = {
-            'email': 'admin.created@gospelspot.com',
+            'email': f'admin.created.{int(datetime.now().timestamp())}@gospelspot.com',
             'password': 'AdminCreated123!',
             'first_name': 'Admin',
             'last_name': 'Created',
