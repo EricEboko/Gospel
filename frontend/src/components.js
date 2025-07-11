@@ -1488,3 +1488,636 @@ const AuthenticationPage = ({ onLogin, language, translations }) => {
 };
 
 // Continue with rest of components...
+
+// Admin Sidebar Component (Updated with dark blue and gold theme)
+const AdminSidebar = ({ activeTab, setActiveTab, language, translations }) => {
+  const t = translations[language];
+  
+  return (
+    <div className="w-64 bg-gradient-to-b from-gray-900 via-blue-900 to-gray-900 text-white p-6 flex flex-col">
+      <div className="flex items-center mb-8">
+        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-gray-900 font-bold text-lg mr-3">
+          A
+        </div>
+        <h1 className="text-xl font-bold text-yellow-400">Admin Console</h1>
+      </div>
+      
+      <nav className="flex-1">
+        <div className="space-y-2">
+          <button
+            onClick={() => setActiveTab('admin-dashboard')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'admin-dashboard' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <DashboardIcon className="w-6 h-6" />
+            <span className="font-medium">{t.dashboard}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('admin-users')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'admin-users' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <UsersIcon className="w-6 h-6" />
+            <span className="font-medium">{t.userManagement}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('admin-content')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'admin-content' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <LibraryIcon className="w-6 h-6" />
+            <span className="font-medium">{t.contentManagement}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('admin-subscriptions')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'admin-subscriptions' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <CrownIcon className="w-6 h-6" />
+            <span className="font-medium">{t.subscriptionManagement}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('admin-analytics')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'admin-analytics' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <AnalyticsIcon className="w-6 h-6" />
+            <span className="font-medium">{t.analytics}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('admin-settings')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'admin-settings' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <SettingsIcon className="w-6 h-6" />
+            <span className="font-medium">{t.settings}</span>
+          </button>
+        </div>
+      </nav>
+      
+      <button
+        onClick={() => setActiveTab('home')}
+        className="mt-auto bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 p-3 rounded-lg transition-all font-medium hover:from-yellow-500 hover:to-yellow-700"
+      >
+        Back to App
+      </button>
+    </div>
+  );
+};
+
+// Regular User Sidebar Component (Updated with better responsiveness and darker theme)
+const Sidebar = ({ activeTab, setActiveTab, language, setLanguage, translations, userPlaylists, setShowCreatePlaylist, currentUser, onLogout }) => {
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const t = translations[language];
+
+  return (
+    <div className="w-64 bg-gradient-to-b from-gray-900 via-blue-900 to-gray-900 text-white p-6 flex flex-col lg:relative fixed z-50 h-full lg:h-auto">
+      <div className="flex items-center mb-8">
+        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-gray-900 font-bold text-lg mr-3">
+          G
+        </div>
+        <h1 className="text-xl font-bold text-yellow-400">GospelSpot</h1>
+      </div>
+      
+      <nav className="flex-1">
+        <div className="space-y-2">
+          <button
+            onClick={() => setActiveTab('home')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'home' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <HomeIcon className="w-6 h-6" />
+            <span className="font-medium">{t.home}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('search')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'search' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <SearchIcon className="w-6 h-6" />
+            <span className="font-medium">{t.search}</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('library')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'library' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <LibraryIcon className="w-6 h-6" />
+            <span className="font-medium">{t.library}</span>
+          </button>
+        </div>
+        
+        <div className="mt-8">
+          <button 
+            onClick={() => setShowCreatePlaylist(true)}
+            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-800 transition-colors"
+          >
+            <PlusIcon className="w-6 h-6" />
+            <span className="font-medium">{t.createPlaylist}</span>
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab('liked-songs')}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+              activeTab === 'liked-songs' ? 'bg-blue-700 text-yellow-300' : 'hover:bg-blue-800'
+            }`}
+          >
+            <HeartIcon className="w-6 h-6 text-yellow-500" />
+            <span className="font-medium">{t.likedSongs}</span>
+          </button>
+          
+          {userPlaylists.length > 0 && (
+            <div className="mt-4 space-y-1">
+              {userPlaylists.map((playlist) => (
+                <button
+                  key={playlist.id}
+                  onClick={() => setActiveTab(`playlist-${playlist.id}`)}
+                  className={`w-full text-left p-2 rounded hover:bg-blue-800 transition-colors ${
+                    activeTab === `playlist-${playlist.id}` ? 'bg-blue-700 text-yellow-300' : 'text-gray-300'
+                  }`}
+                >
+                  {playlist.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </nav>
+      
+      {/* Subscription Status */}
+      <div className="mt-auto">
+        {currentUser?.subscription !== 'premium' && currentUser?.subscription !== 'family' && (
+          <button
+            onClick={() => setActiveTab('subscription')}
+            className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 p-3 rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all mb-4 flex items-center justify-center space-x-2 font-medium"
+          >
+            <CrownIcon className="w-5 h-5" />
+            <span>{t.upgrade}</span>
+          </button>
+        )}
+        
+        {/* User Profile */}
+        <div className="relative">
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-800 transition-colors"
+          >
+            <img src={currentUser?.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"} alt="Profile" className="w-8 h-8 rounded-full" />
+            <div className="flex-1 text-left">
+              <div className="font-medium text-sm text-white">{currentUser?.name || "User"}</div>
+              <div className="text-xs text-yellow-400 capitalize">{currentUser?.subscription || "free"}</div>
+            </div>
+          </button>
+          
+          {showUserMenu && (
+            <div className="absolute bottom-full left-0 right-0 bg-gray-800 border border-gray-700 rounded-lg p-2 mb-2 shadow-lg">
+              <button
+                onClick={() => { setActiveTab('profile'); setShowUserMenu(false); }}
+                className="w-full text-left p-2 rounded hover:bg-gray-700 text-white"
+              >
+                {t.profile}
+              </button>
+              <button
+                onClick={() => { setActiveTab('subscription'); setShowUserMenu(false); }}
+                className="w-full text-left p-2 rounded hover:bg-gray-700 text-white"
+              >
+                {t.subscription}
+              </button>
+              {(currentUser?.role === 'superadmin' || currentUser?.role === 'admin') && (
+                <button
+                  onClick={() => { setActiveTab('admin-dashboard'); setShowUserMenu(false); }}
+                  className="w-full text-left p-2 rounded hover:bg-gray-700 text-yellow-400"
+                >
+                  {t.adminConsole}
+                </button>
+              )}
+              {currentUser?.role === 'artist' && (
+                <button
+                  onClick={() => { setActiveTab('artist-stats'); setShowUserMenu(false); }}
+                  className="w-full text-left p-2 rounded hover:bg-gray-700 text-yellow-400"
+                >
+                  {t.artistStats}
+                </button>
+              )}
+              <button
+                onClick={() => { setActiveTab('change-password'); setShowUserMenu(false); }}
+                className="w-full text-left p-2 rounded hover:bg-gray-700 text-white"
+              >
+                {t.changePassword}
+              </button>
+              <button
+                onClick={onLogout}
+                className="w-full text-left p-2 rounded hover:bg-gray-700 text-red-400"
+              >
+                {t.logout}
+              </button>
+            </div>
+          )}
+        </div>
+        
+        {/* Language Selector */}
+        <div className="relative mt-2">
+          <button
+            onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-800 transition-colors"
+          >
+            <LanguageIcon className="w-6 h-6" />
+            <span className="font-medium">{t.language}</span>
+          </button>
+          
+          {showLanguageDropdown && (
+            <div className="absolute bottom-full left-0 right-0 bg-gray-800 border border-gray-700 rounded-lg p-2 mb-2 shadow-lg">
+              <button
+                onClick={() => { setLanguage('en'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'en' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => { setLanguage('es'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'es' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                Español
+              </button>
+              <button
+                onClick={() => { setLanguage('pt'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'pt' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                Português
+              </button>
+              <button
+                onClick={() => { setLanguage('fr'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'fr' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                Français
+              </button>
+              <button
+                onClick={() => { setLanguage('de'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'de' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                Deutsch
+              </button>
+              <button
+                onClick={() => { setLanguage('it'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'it' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                Italiano
+              </button>
+              <button
+                onClick={() => { setLanguage('ru'); setShowLanguageDropdown(false); }}
+                className={`w-full text-left p-2 rounded hover:bg-gray-700 ${language === 'ru' ? 'bg-blue-700 text-yellow-300' : 'text-white'}`}
+              >
+                Русский
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Subscription Plans Component (Updated with better payment system)
+const SubscriptionPlansView = ({ language, translations, currentUser, onUpgrade }) => {
+  const t = translations[language];
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [showPayment, setShowPayment] = useState(false);
+  
+  const handlePlanSelect = (plan) => {
+    setSelectedPlan(plan);
+    setShowPayment(true);
+  };
+
+  const handlePayment = () => {
+    onUpgrade(selectedPlan);
+    setShowPayment(false);
+    setSelectedPlan(null);
+  };
+  
+  return (
+    <div className="p-4 sm:p-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 min-h-screen">
+      <div className="text-center mb-12">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">Choose Your Plan</h1>
+        <p className="text-lg sm:text-xl text-gray-300">Get the most out of your gospel music experience</p>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        {mockData.subscriptionPlans.map((plan) => (
+          <div key={plan.id} className={`relative bg-gray-800 border-2 rounded-xl p-6 shadow-xl transition-all hover:shadow-2xl ${
+            plan.popular ? 'border-yellow-400 scale-105' : 'border-gray-700'
+          } ${currentUser?.subscription === plan.id ? 'ring-2 ring-green-400' : ''}`}>
+            
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
+                  Most Popular
+                </span>
+              </div>
+            )}
+            
+            {currentUser?.subscription === plan.id && (
+              <div className="absolute -top-3 right-4">
+                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  Current Plan
+                </span>
+              </div>
+            )}
+            
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+              <div className="mb-4">
+                <span className="text-3xl sm:text-4xl font-bold text-yellow-400">${plan.price}</span>
+                <span className="text-gray-400">/{plan.interval}</span>
+              </div>
+            </div>
+            
+            <ul className="space-y-3 mb-8">
+              {plan.features.map((feature, index) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <svg className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm text-gray-300">{feature}</span>
+                </li>
+              ))}
+            </ul>
+            
+            <button
+              onClick={() => currentUser?.subscription === plan.id ? null : handlePlanSelect(plan)}
+              disabled={currentUser?.subscription === plan.id}
+              className={`w-full py-3 px-4 rounded-lg font-medium transition-all ${
+                currentUser?.subscription === plan.id
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : plan.popular
+                  ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 hover:from-yellow-500 hover:to-yellow-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {currentUser?.subscription === plan.id ? 'Current Plan' : plan.price === 0 ? 'Get Started' : 'Upgrade Now'}
+            </button>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-12 text-center">
+        <p className="text-gray-300 mb-4">All plans include a 30-day free trial</p>
+        <p className="text-sm text-gray-400">Cancel anytime. No questions asked.</p>
+      </div>
+
+      {/* Payment Modal */}
+      {showPayment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Complete Payment</h2>
+            <div className="mb-6">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-bold text-gray-800">{selectedPlan?.name} Plan</h3>
+                <p className="text-2xl font-bold text-blue-600">${selectedPlan?.price}/month</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                <input
+                  type="text"
+                  placeholder="1234 5678 9012 3456"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Expiry</label>
+                  <input
+                    type="text"
+                    placeholder="MM/YY"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                  <input
+                    type="text"
+                    placeholder="123"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowPayment(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePayment}
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
+              >
+                Pay ${selectedPlan?.price}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Enhanced Admin Dashboard with CSV download
+const AdminDashboard = ({ language, translations }) => {
+  const t = translations[language];
+  const analytics = mockData.analytics;
+  
+  const downloadCSV = (data, filename) => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + Object.keys(data[0]).join(",") + "\n"
+      + data.map(row => Object.values(row).join(",")).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  return (
+    <div className="p-4 sm:p-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 min-h-screen">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-0">Admin Dashboard</h1>
+        <button
+          onClick={() => downloadCSV(mockData.users, 'users_data.csv')}
+          className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 px-4 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all flex items-center space-x-2 font-medium"
+        >
+          <DownloadIcon className="w-5 h-5" />
+          <span>{t.downloadCSV}</span>
+        </button>
+      </div>
+      
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Total Users</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">{analytics.totalUsers.toLocaleString()}</p>
+            </div>
+            <UsersIcon className="w-8 h-8 text-blue-400" />
+          </div>
+          <p className="text-sm text-green-400 mt-2">+{analytics.growthMetrics.userGrowth}% this month</p>
+        </div>
+        
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Premium Users</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">{analytics.premiumUsers.toLocaleString()}</p>
+            </div>
+            <CrownIcon className="w-8 h-8 text-yellow-400" />
+          </div>
+          <p className="text-sm text-gray-400 mt-2">{((analytics.premiumUsers / analytics.totalUsers) * 100).toFixed(1)}% conversion</p>
+        </div>
+        
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Monthly Revenue</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">${analytics.revenue.toLocaleString()}</p>
+            </div>
+            <MoneyIcon className="w-8 h-8 text-green-400" />
+          </div>
+          <p className="text-sm text-green-400 mt-2">+{analytics.growthMetrics.revenueGrowth}% this month</p>
+        </div>
+        
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Songs Streamed</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white">{(analytics.songsStreamed / 1000).toFixed(0)}K</p>
+            </div>
+            <PlayIcon className="w-8 h-8 text-purple-400" />
+          </div>
+          <p className="text-sm text-gray-400 mt-2">{analytics.hoursListened.toLocaleString()} hours total</p>
+        </div>
+      </div>
+      
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Top Genres */}
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+          <h3 className="text-xl font-bold text-white mb-4">Top Genres</h3>
+          <div className="space-y-4">
+            {analytics.topGenres.map((genre, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-white">{genre.name}</span>
+                    <span className="text-sm text-gray-400">{genre.percentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full" 
+                      style={{ width: `${genre.percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Revenue by Plan */}
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+          <h3 className="text-xl font-bold text-white mb-4">Revenue by Plan</h3>
+          <div className="space-y-4">
+            {analytics.revenueByPlan.map((plan, index) => (
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-white">{plan.plan}</h4>
+                  <p className="text-sm text-gray-400">{plan.users.toLocaleString()} users</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-yellow-400">${plan.revenue.toLocaleString()}</p>
+                  <p className="text-sm text-gray-400">monthly</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Recent Activity */}
+      <div className="mt-8 bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+        <h3 className="text-xl font-bold text-white mb-4">Recent Users</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-700">
+                <th className="text-left p-4 font-medium text-gray-300">User</th>
+                <th className="text-left p-4 font-medium text-gray-300">Subscription</th>
+                <th className="text-left p-4 font-medium text-gray-300">Join Date</th>
+                <th className="text-left p-4 font-medium text-gray-300">Last Active</th>
+                <th className="text-left p-4 font-medium text-gray-300">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockData.users.slice(0, 5).map((user) => (
+                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-700">
+                  <td className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+                      <div>
+                        <p className="font-medium text-white">{user.name}</p>
+                        <p className="text-gray-400">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                      user.subscription === 'premium' ? 'bg-blue-900 text-blue-300' :
+                      user.subscription === 'family' ? 'bg-purple-900 text-purple-300' :
+                      user.subscription === 'student' ? 'bg-green-900 text-green-300' :
+                      'bg-gray-600 text-gray-300'
+                    }`}>
+                      {user.subscription}
+                    </span>
+                  </td>
+                  <td className="p-4 text-gray-400">{user.joinDate}</td>
+                  <td className="p-4 text-gray-400">{user.lastActive}</td>
+                  <td className="p-4">
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-green-300">
+                      {user.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Continue with more components in the main export...
