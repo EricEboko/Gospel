@@ -10,7 +10,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 
-from .models import User, UserRole
+from models import User, UserRole
 
 # Security
 security = HTTPBearer()
