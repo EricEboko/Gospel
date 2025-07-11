@@ -96,7 +96,7 @@ class GospelSpotAPITester:
             {
                 'name': 'regular_user',
                 'data': {
-                    'email': 'john.doe@gospelspot.com',
+                    'email': f'john.doe.{int(datetime.now().timestamp())}@gospelspot.com',
                     'password': 'SecurePass123!',
                     'first_name': 'John',
                     'last_name': 'Doe',
@@ -109,7 +109,7 @@ class GospelSpotAPITester:
             {
                 'name': 'label_manager',
                 'data': {
-                    'email': 'sarah.manager@gospelrecords.com',
+                    'email': f'sarah.manager.{int(datetime.now().timestamp())}@gospelrecords.com',
                     'password': 'LabelPass456!',
                     'first_name': 'Sarah',
                     'last_name': 'Manager',
@@ -122,7 +122,7 @@ class GospelSpotAPITester:
             {
                 'name': 'artist_user',
                 'data': {
-                    'email': 'david.singer@music.com',
+                    'email': f'david.singer.{int(datetime.now().timestamp())}@music.com',
                     'password': 'ArtistPass789!',
                     'first_name': 'David',
                     'last_name': 'Singer',
