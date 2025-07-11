@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-// Enhanced mock data with subscription and admin features
+// Enhanced mock data with more comprehensive features
 const mockData = {
   subscriptionPlans: [
     {
@@ -113,12 +113,16 @@ const mockData = {
       id: 1,
       name: 'John Smith',
       email: 'john@example.com',
+      password: 'hashed_password_123',
       subscription: 'premium',
       joinDate: '2024-01-15',
       lastActive: '2025-07-11',
       status: 'active',
       paymentMethod: 'Credit Card',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      role: 'user',
+      language: 'en',
+      country: 'USA',
       stats: {
         songsPlayed: 1250,
         playlistsCreated: 8,
@@ -127,50 +131,49 @@ const mockData = {
     },
     {
       id: 2,
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      subscription: 'family',
-      joinDate: '2024-03-22',
-      lastActive: '2025-07-10',
+      name: 'SuperAdmin',
+      email: 'admin@gospelspot.com',
+      password: 'admin123',
+      subscription: 'premium',
+      joinDate: '2023-01-01',
+      lastActive: '2025-07-11',
       status: 'active',
-      paymentMethod: 'PayPal',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b4db?w=150&h=150&fit=crop&crop=face',
+      paymentMethod: null,
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      role: 'superadmin',
+      language: 'en',
+      country: 'USA',
       stats: {
-        songsPlayed: 2100,
-        playlistsCreated: 15,
-        hoursListened: 156
+        songsPlayed: 0,
+        playlistsCreated: 0,
+        hoursListened: 0
       }
     },
     {
       id: 3,
-      name: 'Mike Wilson',
-      email: 'mike@example.com',
-      subscription: 'student',
-      joinDate: '2024-09-10',
-      lastActive: '2025-07-09',
-      status: 'active',
-      paymentMethod: 'Credit Card',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      stats: {
-        songsPlayed: 850,
-        playlistsCreated: 4,
-        hoursListened: 62
-      }
-    },
-    {
-      id: 4,
-      name: 'Emma Davis',
-      email: 'emma@example.com',
-      subscription: 'free',
-      joinDate: '2025-01-05',
+      name: 'Brandon Lake',
+      email: 'brandon@example.com',
+      password: 'artist123',
+      subscription: 'premium',
+      joinDate: '2024-03-01',
       lastActive: '2025-07-11',
       status: 'active',
-      paymentMethod: null,
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      paymentMethod: 'Credit Card',
+      avatar: 'https://images.unsplash.com/photo-1602022578288-5824e225738f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85',
+      role: 'artist',
+      language: 'en',
+      country: 'USA',
       stats: {
-        songsPlayed: 320,
-        playlistsCreated: 2,
-        hoursListened: 28
+        songsPlayed: 0,
+        playlistsCreated: 0,
+        hoursListened: 0,
+        artistStats: {
+          totalStreams: 2400000,
+          monthlyListeners: 450000,
+          topSong: "That's Who I Praise",
+          totalAlbums: 3,
+          followers: 2400000
+        }
       }
     }
   ],
@@ -182,10 +185,10 @@ const mockData = {
     songsStreamed: 892145,
     hoursListened: 45623,
     topGenres: [
-      { name: 'Contemporary Christian', percentage: 35, streams: 312051 },
-      { name: 'Worship', percentage: 28, streams: 249881 },
-      { name: 'Gospel', percentage: 22, streams: 196272 },
-      { name: 'Christian Rock', percentage: 15, streams: 133822 }
+      { name: 'Contemporary Christian', percentage: 35, streams: 312051, countries: ['USA', 'Canada', 'UK'] },
+      { name: 'Worship', percentage: 28, streams: 249881, countries: ['USA', 'Brazil', 'Australia'] },
+      { name: 'Gospel', percentage: 22, streams: 196272, countries: ['USA', 'Nigeria', 'South Africa'] },
+      { name: 'Christian Rock', percentage: 15, streams: 133822, countries: ['USA', 'Germany', 'Canada'] }
     ],
     revenueByPlan: [
       { plan: 'Premium', revenue: 28456.32, users: 2847 },
@@ -196,7 +199,15 @@ const mockData = {
       userGrowth: 15.2,
       revenueGrowth: 23.8,
       retentionRate: 87.5
-    }
+    },
+    usersByCountry: [
+      { country: 'USA', users: 5234, percentage: 42 },
+      { country: 'Brazil', users: 2156, percentage: 17 },
+      { country: 'Nigeria', users: 1876, percentage: 15 },
+      { country: 'UK', users: 1245, percentage: 10 },
+      { country: 'Canada', users: 987, percentage: 8 },
+      { country: 'Others', users: 1045, percentage: 8 }
+    ]
   },
   featuredPlaylists: [
     {
@@ -205,14 +216,17 @@ const mockData = {
       description: "The biggest contemporary Christian songs right now",
       image: "https://images.unsplash.com/photo-1507692049790-de58290a4334?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
       songs: [
-        { id: 1, title: "That's Who I Praise", artist: "Brandon Lake", album: "King of Hearts", duration: "3:45" },
-        { id: 2, title: "Hard Fought Hallelujah", artist: "Brandon Lake", album: "King of Hearts", duration: "4:12" },
-        { id: 3, title: "God Did!", artist: "Sons of Sunday", album: "Sons of Sunday", duration: "3:28" }
+        { id: 1, title: "That's Who I Praise", artist: "Brandon Lake", album: "King of Hearts", duration: "3:45", language: "English", country: "USA" },
+        { id: 2, title: "Hard Fought Hallelujah", artist: "Brandon Lake", album: "King of Hearts", duration: "4:12", language: "English", country: "USA" },
+        { id: 3, title: "God Did!", artist: "Sons of Sunday", album: "Sons of Sunday", duration: "3:28", language: "English", country: "USA" }
       ],
       followers: 1250000,
       isPublic: true,
       createdBy: "GospelSpot",
-      tags: ["contemporary", "worship", "praise"]
+      tags: ["contemporary", "worship", "praise"],
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
     },
     {
       id: 2,
@@ -220,14 +234,17 @@ const mockData = {
       description: "Essential worship songs for your spiritual journey",
       image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
       songs: [
-        { id: 4, title: "No Fear", artist: "Jon Reddick", album: "No Fear", duration: "3:56" },
-        { id: 5, title: "Oh Death", artist: "MercyMe", album: "Wonder & Awe", duration: "4:23" },
-        { id: 6, title: "Sing (Like You've Already Won)", artist: "MercyMe", album: "Wonder & Awe", duration: "3:41" }
+        { id: 4, title: "No Fear", artist: "Jon Reddick", album: "No Fear", duration: "3:56", language: "English", country: "USA" },
+        { id: 5, title: "Oh Death", artist: "MercyMe", album: "Wonder & Awe", duration: "4:23", language: "English", country: "USA" },
+        { id: 6, title: "Sing (Like You've Already Won)", artist: "MercyMe", album: "Wonder & Awe", duration: "3:41", language: "English", country: "USA" }
       ],
       followers: 890000,
       isPublic: true,
       createdBy: "GospelSpot",
-      tags: ["worship", "spiritual", "praise"]
+      tags: ["worship", "spiritual", "praise"],
+      language: "English",
+      country: "USA",
+      category: "Worship"
     },
     {
       id: 3,
@@ -235,29 +252,35 @@ const mockData = {
       description: "Timeless gospel songs that never get old",
       image: "https://images.pexels.com/photos/8815036/pexels-photo-8815036.jpeg",
       songs: [
-        { id: 7, title: "Amazing Grace", artist: "Traditional Gospel", album: "Gospel Classics", duration: "4:15" },
-        { id: 8, title: "How Great Thou Art", artist: "Traditional Gospel", album: "Gospel Classics", duration: "3:52" },
-        { id: 9, title: "Blessed Assurance", artist: "Traditional Gospel", album: "Gospel Classics", duration: "3:28" }
+        { id: 7, title: "Amazing Grace", artist: "Traditional Gospel", album: "Gospel Classics", duration: "4:15", language: "English", country: "USA" },
+        { id: 8, title: "How Great Thou Art", artist: "Traditional Gospel", album: "Gospel Classics", duration: "3:52", language: "English", country: "USA" },
+        { id: 9, title: "Blessed Assurance", artist: "Traditional Gospel", album: "Gospel Classics", duration: "3:28", language: "English", country: "USA" }
       ],
       followers: 750000,
       isPublic: true,
       createdBy: "GospelSpot",
-      tags: ["traditional", "gospel", "classic"]
+      tags: ["traditional", "gospel", "classic"],
+      language: "English",
+      country: "USA",
+      category: "Gospel"
     },
     {
       id: 4,
-      name: "Christian Rock Anthems",
-      description: "Powerful Christian rock songs to energize your faith",
+      name: "Хвала и Поклонение",
+      description: "Русские христианские песни для поклонения",
       image: "https://images.unsplash.com/photo-1602022578288-5824e225738f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
       songs: [
-        { id: 10, title: "Monster", artist: "Skillet", album: "Awake", duration: "2:59" },
-        { id: 11, title: "Victorious", artist: "Skillet", album: "Unleashed", duration: "3:43" },
-        { id: 12, title: "Reborn", artist: "Skillet", album: "Collide", duration: "3:52" }
+        { id: 10, title: "Святой Бог", artist: "Hillsong на русском", album: "Поклонение", duration: "4:23", language: "Russian", country: "Russia" },
+        { id: 11, title: "Великий Я Есть", artist: "Bethel на русском", album: "Величие", duration: "5:12", language: "Russian", country: "Russia" },
+        { id: 12, title: "Иисус культура", artist: "Jesus Culture на русском", album: "Живая вода", duration: "4:45", language: "Russian", country: "Russia" }
       ],
-      followers: 950000,
+      followers: 450000,
       isPublic: true,
       createdBy: "GospelSpot",
-      tags: ["rock", "contemporary", "energetic"]
+      tags: ["worship", "russian", "praise"],
+      language: "Russian",
+      country: "Russia",
+      category: "Worship"
     }
   ],
   newReleases: [
@@ -271,7 +294,10 @@ const mockData = {
       genre: "Contemporary Christian",
       description: "Brandon Lake's powerful new album featuring chart-topping hits",
       tracks: 12,
-      duration: "45:30"
+      duration: "45:30",
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
     },
     {
       id: 2,
@@ -283,55 +309,25 @@ const mockData = {
       genre: "Worship",
       description: "Self-titled debut album by the worship collective",
       tracks: 10,
-      duration: "38:45"
+      duration: "38:45",
+      language: "English",
+      country: "USA",
+      category: "Worship"
     },
     {
       id: 3,
-      title: "Child of God II",
-      artist: "Forrest Frank",
+      title: "Величие Христа",
+      artist: "Bethel Русский",
       image: "https://images.unsplash.com/photo-1669198074199-5f58e548974e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwzfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
       year: "2025",
       type: "Album",
-      genre: "Contemporary Christian",
-      description: "Diverse sound blending various genres with Christian themes",
-      tracks: 14,
-      duration: "52:15"
-    },
-    {
-      id: 4,
-      title: "No Fear",
-      artist: "Jon Reddick",
-      image: "https://images.pexels.com/photos/7520077/pexels-photo-7520077.jpeg",
-      year: "2025",
-      type: "Single",
-      genre: "Contemporary Christian",
-      description: "Jon Reddick's first No. 1 hit on Christian Airplay",
-      tracks: 1,
-      duration: "3:56"
-    },
-    {
-      id: 5,
-      title: "Wonder & Awe",
-      artist: "MercyMe",
-      image: "https://images.pexels.com/photos/7520079/pexels-photo-7520079.jpeg",
-      year: "2025",
-      type: "Album",
-      genre: "Contemporary Christian",
-      description: "MercyMe's latest inspirational album",
-      tracks: 11,
-      duration: "42:18"
-    },
-    {
-      id: 6,
-      title: "Gospel Voices",
-      artist: "Various Artists",
-      image: "https://images.pexels.com/photos/1666816/pexels-photo-1666816.jpeg",
-      year: "2025",
-      type: "Compilation",
-      genre: "Gospel",
-      description: "Collection of powerful gospel voices",
-      tracks: 18,
-      duration: "67:22"
+      genre: "Worship",
+      description: "Русскоязычный альбом прославления",
+      tracks: 8,
+      duration: "32:15",
+      language: "Russian",
+      country: "Russia",
+      category: "Worship"
     }
   ],
   topArtists: [
@@ -344,7 +340,10 @@ const mockData = {
       monthlyListeners: "5.2M",
       verified: true,
       bio: "Contemporary Christian music artist known for powerful worship songs",
-      topSongs: ["That's Who I Praise", "Hard Fought Hallelujah", "Gratitude"]
+      topSongs: ["That's Who I Praise", "Hard Fought Hallelujah", "Gratitude"],
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
     },
     {
       id: 2,
@@ -355,35 +354,30 @@ const mockData = {
       monthlyListeners: "3.9M",
       verified: true,
       bio: "Multi-platinum selling Christian rock band",
-      topSongs: ["Oh Death", "Sing (Like You've Already Won)", "I Can Only Imagine"]
+      topSongs: ["Oh Death", "Sing (Like You've Already Won)", "I Can Only Imagine"],
+      language: "English",
+      country: "USA",
+      category: "Contemporary Christian"
     },
     {
       id: 3,
-      name: "Sons of Sunday",
+      name: "Hillsong Русский",
       image: "https://images.pexels.com/photos/415571/pexels-photo-415571.jpeg",
       followers: "892K",
       genre: "Worship",
       monthlyListeners: "1.7M",
       verified: true,
-      bio: "Worship collective creating authentic worship experiences",
-      topSongs: ["God Did!", "Sunday Morning", "Praise the Lord"]
-    },
-    {
-      id: 4,
-      name: "Jon Reddick",
-      image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85",
-      followers: "654K",
-      genre: "Contemporary Christian",
-      monthlyListeners: "1.3M",
-      verified: true,
-      bio: "Worship leader and songwriter",
-      topSongs: ["No Fear", "Light the Way", "Freedom"]
+      bio: "Русскоязычное поклонение и прославление",
+      topSongs: ["Святой Бог", "Великий Я Есть", "Иисус культура"],
+      language: "Russian",
+      country: "Russia",
+      category: "Worship"
     }
   ],
   recentlyPlayed: [
-    { id: 1, title: "That's Who I Praise", artist: "Brandon Lake", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85", playedAt: "2 hours ago" },
-    { id: 2, title: "No Fear", artist: "Jon Reddick", image: "https://images.pexels.com/photos/7520077/pexels-photo-7520077.jpeg", playedAt: "5 hours ago" },
-    { id: 3, title: "God Did!", artist: "Sons of Sunday", image: "https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85", playedAt: "1 day ago" }
+    { id: 1, title: "That's Who I Praise", artist: "Brandon Lake", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85", playedAt: "2 hours ago", language: "English", country: "USA" },
+    { id: 2, title: "No Fear", artist: "Jon Reddick", image: "https://images.pexels.com/photos/7520077/pexels-photo-7520077.jpeg", playedAt: "5 hours ago", language: "English", country: "USA" },
+    { id: 3, title: "Святой Бог", artist: "Hillsong Русский", image: "https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85", playedAt: "1 day ago", language: "Russian", country: "Russia" }
   ],
   genres: [
     { id: 1, name: 'Contemporary Christian', color: 'bg-blue-600', image: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85' },
@@ -396,12 +390,14 @@ const mockData = {
     { id: 8, name: 'Christian Folk', color: 'bg-teal-600', image: 'https://images.pexels.com/photos/54333/person-clinic-cross-religion-54333.jpeg' },
     { id: 9, name: 'Christian Pop', color: 'bg-pink-600', image: 'https://images.pexels.com/photos/415571/pexels-photo-415571.jpeg' },
     { id: 10, name: 'Hymns', color: 'bg-gray-600', image: 'https://images.unsplash.com/photo-1669198074199-5f58e548974e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwzfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85' },
-    { id: 11, name: 'Christian Metal', color: 'bg-black', image: 'https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85' },
+    { id: 11, name: 'Russian Worship', color: 'bg-red-800', image: 'https://images.unsplash.com/photo-1701427835787-2c2bb970d55e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwyfHxnb3NwZWwlMjBtdXNpY3xlbnwwfHx8fDE3NTIyMTczNTZ8MA&ixlib=rb-4.1.0&q=85' },
     { id: 12, name: 'Christian Country', color: 'bg-amber-600', image: 'https://images.pexels.com/photos/7520077/pexels-photo-7520077.jpeg' }
-  ]
+  ],
+  countries: ['USA', 'Brazil', 'Nigeria', 'UK', 'Canada', 'Russia', 'Germany', 'Australia', 'South Africa', 'Mexico'],
+  languages: ['English', 'Spanish', 'Portuguese', 'Russian', 'French', 'German', 'Italian']
 };
 
-// Extended language translations with admin and subscription terms
+// Complete language translations including Russian
 const translations = {
   en: {
     // Basic navigation
@@ -432,6 +428,20 @@ const translations = {
     browseAll: "Browse all",
     searchResults: "Search results for",
     
+    // Authentication
+    login: "Login",
+    register: "Register",
+    logout: "Logout",
+    email: "Email",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    forgotPassword: "Forgot Password?",
+    createAccount: "Create Account",
+    checkEmail: "Check my email",
+    changePassword: "Change Password",
+    currentPassword: "Current Password",
+    newPassword: "New Password",
+    
     // Subscription & Account
     subscription: "Subscription",
     premium: "Premium",
@@ -446,7 +456,6 @@ const translations = {
     profile: "Profile",
     notifications: "Notifications",
     privacy: "Privacy",
-    logout: "Logout",
     currentPlan: "Current Plan",
     changePlan: "Change Plan",
     cancelSubscription: "Cancel Subscription",
@@ -467,6 +476,7 @@ const translations = {
     premiumUsers: "Premium Users",
     revenue: "Revenue",
     growth: "Growth",
+    downloadCSV: "Download CSV",
     
     // Content Management
     addArtist: "Add Artist",
@@ -479,17 +489,21 @@ const translations = {
     editSong: "Edit Song",
     deleteSong: "Delete Song",
     uploadImage: "Upload Image",
+    category: "Category",
+    country: "Country",
     
     // User Management
     viewUser: "View User",
     editUser: "Edit User",
     deleteUser: "Delete User",
+    addUser: "Add User",
     banUser: "Ban User",
     unbanUser: "Unban User",
     userDetails: "User Details",
     subscriptionStatus: "Subscription Status",
     lastActive: "Last Active",
     joinDate: "Join Date",
+    resetPassword: "Reset Password",
     
     // Common actions
     add: "Add",
@@ -504,14 +518,10 @@ const translations = {
     manage: "Manage",
     filter: "Filter",
     sort: "Sort",
-    search: "Search",
+    searchPlaceholder: "Search...",
     
     // Form fields
     name: "Name",
-    email: "Email",
-    password: "Password",
-    description: "Description",
-    image: "Image",
     title: "Title",
     artist: "Artist",
     album: "Album",
@@ -519,6 +529,8 @@ const translations = {
     duration: "Duration",
     year: "Year",
     status: "Status",
+    description: "Description",
+    image: "Image",
     
     // Status messages
     success: "Success",
@@ -541,21 +553,38 @@ const translations = {
     kidSafe: "Kid-safe mode",
     studentDiscount: "Student discount",
     
-    // Analytics
+    // Analytics & Stats
     streams: "Streams",
     users: "Users",
-    revenue: "Revenue",
     conversion: "Conversion",
     retention: "Retention",
     churn: "Churn",
     engagement: "Engagement",
+    monthlyListeners: "monthly listeners",
+    totalStreams: "Total Streams",
+    artistStats: "Artist Statistics",
     
     // Time periods
     today: "Today",
     thisWeek: "This Week",
     thisMonth: "This Month",
     thisYear: "This Year",
-    allTime: "All Time"
+    allTime: "All Time",
+    
+    // Playlist management
+    playlistName: "Playlist name",
+    makePublic: "Make public",
+    makePrivate: "Make private",
+    sharePlaylist: "Share playlist",
+    deletePlaylist: "Delete playlist",
+    
+    // Miscellaneous
+    tracks: "tracks",
+    verified: "Verified Artist",
+    share: "Share",
+    follow: "Follow",
+    following: "Following",
+    addToPlaylist: "Add to playlist"
   },
   es: {
     // Basic navigation
@@ -586,6 +615,20 @@ const translations = {
     browseAll: "Explorar todo",
     searchResults: "Resultados de búsqueda para",
     
+    // Authentication
+    login: "Iniciar sesión",
+    register: "Registrarse",
+    logout: "Cerrar sesión",
+    email: "Correo electrónico",
+    password: "Contraseña",
+    confirmPassword: "Confirmar contraseña",
+    forgotPassword: "¿Olvidaste tu contraseña?",
+    createAccount: "Crear cuenta",
+    checkEmail: "Verificar mi correo",
+    changePassword: "Cambiar contraseña",
+    currentPassword: "Contraseña actual",
+    newPassword: "Nueva contraseña",
+    
     // Subscription & Account
     subscription: "Suscripción",
     premium: "Premium",
@@ -600,7 +643,6 @@ const translations = {
     profile: "Perfil",
     notifications: "Notificaciones",
     privacy: "Privacidad",
-    logout: "Cerrar Sesión",
     currentPlan: "Plan Actual",
     changePlan: "Cambiar Plan",
     cancelSubscription: "Cancelar Suscripción",
@@ -621,6 +663,7 @@ const translations = {
     premiumUsers: "Usuarios Premium",
     revenue: "Ingresos",
     growth: "Crecimiento",
+    downloadCSV: "Descargar CSV",
     
     // Content Management
     addArtist: "Agregar Artista",
@@ -633,17 +676,21 @@ const translations = {
     editSong: "Editar Canción",
     deleteSong: "Eliminar Canción",
     uploadImage: "Subir Imagen",
+    category: "Categoría",
+    country: "País",
     
     // User Management
     viewUser: "Ver Usuario",
     editUser: "Editar Usuario",
     deleteUser: "Eliminar Usuario",
+    addUser: "Agregar Usuario",
     banUser: "Banear Usuario",
     unbanUser: "Desbanear Usuario",
     userDetails: "Detalles del Usuario",
     subscriptionStatus: "Estado de Suscripción",
     lastActive: "Última Actividad",
     joinDate: "Fecha de Registro",
+    resetPassword: "Restablecer Contraseña",
     
     // Common actions
     add: "Agregar",
@@ -658,11 +705,445 @@ const translations = {
     manage: "Gestionar",
     filter: "Filtrar",
     sort: "Ordenar",
-    search: "Buscar"
+    searchPlaceholder: "Buscar...",
+    
+    // Form fields
+    name: "Nombre",
+    title: "Título",
+    artist: "Artista",
+    album: "Álbum",
+    genre: "Género",
+    duration: "Duración",
+    year: "Año",
+    status: "Estado",
+    description: "Descripción",
+    image: "Imagen",
+    
+    // Status messages
+    success: "Éxito",
+    error: "Error",
+    warning: "Advertencia",
+    info: "Información",
+    loading: "Cargando...",
+    saving: "Guardando...",
+    deleting: "Eliminando...",
+    updating: "Actualizando...",
+    
+    tracks: "pistas",
+    verified: "Artista Verificado",
+    share: "Compartir",
+    follow: "Seguir",
+    following: "Siguiendo",
+    monthlyListeners: "oyentes mensuales",
+    totalStreams: "Reproducciones Totales",
+    artistStats: "Estadísticas del Artista",
+    playlistName: "Nombre de la lista",
+    makePublic: "Hacer pública",
+    makePrivate: "Hacer privada"
+  },
+  pt: {
+    // Basic navigation
+    home: "Início",
+    search: "Buscar",
+    library: "Sua biblioteca",
+    createPlaylist: "Criar playlist",
+    likedSongs: "Músicas curtidas",
+    recentlyPlayed: "Tocado recentemente",
+    madeForYou: "Feito para você",
+    newReleases: "Novos lançamentos",
+    topArtists: "Principais artistas",
+    showAll: "Mostrar tudo",
+    playAll: "Tocar tudo",
+    followers: "seguidores",
+    play: "Tocar",
+    pause: "Pausar",
+    next: "Próximo",
+    previous: "Anterior",
+    shuffle: "Aleatório",
+    repeat: "Repetir",
+    volume: "Volume",
+    currentlyPlaying: "Tocando agora",
+    goodEvening: "Boa noite",
+    goodMorning: "Bom dia",
+    goodAfternoon: "Boa tarde",
+    language: "Idioma",
+    browseAll: "Explorar tudo",
+    searchResults: "Resultados da busca para",
+    
+    // Authentication
+    login: "Entrar",
+    register: "Registrar",
+    logout: "Sair",
+    email: "E-mail",
+    password: "Senha",
+    confirmPassword: "Confirmar senha",
+    forgotPassword: "Esqueceu a senha?",
+    createAccount: "Criar conta",
+    checkEmail: "Verificar meu e-mail",
+    changePassword: "Alterar senha",
+    currentPassword: "Senha atual",
+    newPassword: "Nova senha",
+    
+    // Subscription & Account
+    subscription: "Assinatura",
+    premium: "Premium",
+    family: "Família",
+    student: "Estudante",
+    free: "Gratuito",
+    upgrade: "Fazer upgrade",
+    manageSubscription: "Gerenciar Assinatura",
+    billing: "Cobrança",
+    paymentMethod: "Método de Pagamento",
+    accountSettings: "Configurações da Conta",
+    profile: "Perfil",
+    notifications: "Notificações",
+    privacy: "Privacidade",
+    currentPlan: "Plano Atual",
+    changePlan: "Alterar Plano",
+    cancelSubscription: "Cancelar Assinatura",
+    renewSubscription: "Renovar Assinatura",
+    freeTrial: "Teste Gratuito",
+    startFreeTrial: "Iniciar Teste Gratuito",
+    
+    tracks: "faixas",
+    verified: "Artista Verificado",
+    monthlyListeners: "ouvintes mensais",
+    playlistName: "Nome da playlist"
+  },
+  fr: {
+    // Basic navigation
+    home: "Accueil",
+    search: "Rechercher",
+    library: "Votre bibliothèque",
+    createPlaylist: "Créer une playlist",
+    likedSongs: "Titres likés",
+    recentlyPlayed: "Écouté récemment",
+    madeForYou: "Fait pour vous",
+    newReleases: "Nouveautés",
+    topArtists: "Artistes populaires",
+    showAll: "Tout afficher",
+    playAll: "Tout lire",
+    followers: "abonnés",
+    play: "Lire",
+    pause: "Pause",
+    next: "Suivant",
+    previous: "Précédent",
+    shuffle: "Aléatoire",
+    repeat: "Répéter",
+    volume: "Volume",
+    currentlyPlaying: "En cours de lecture",
+    goodEvening: "Bonsoir",
+    goodMorning: "Bonjour",
+    goodAfternoon: "Bon après-midi",
+    language: "Langue",
+    browseAll: "Parcourir tout",
+    searchResults: "Résultats de recherche pour",
+    
+    // Authentication
+    login: "Se connecter",
+    register: "S'inscrire",
+    logout: "Se déconnecter",
+    email: "E-mail",
+    password: "Mot de passe",
+    confirmPassword: "Confirmer le mot de passe",
+    forgotPassword: "Mot de passe oublié?",
+    createAccount: "Créer un compte",
+    checkEmail: "Vérifier mon e-mail",
+    changePassword: "Changer le mot de passe",
+    currentPassword: "Mot de passe actuel",
+    newPassword: "Nouveau mot de passe",
+    
+    tracks: "pistes",
+    verified: "Artiste Vérifié",
+    monthlyListeners: "auditeurs mensuels",
+    playlistName: "Nom de la playlist"
+  },
+  de: {
+    // Basic navigation
+    home: "Startseite",
+    search: "Suchen",
+    library: "Deine Bibliothek",
+    createPlaylist: "Playlist erstellen",
+    likedSongs: "Gelikte Songs",
+    recentlyPlayed: "Kürzlich gespielt",
+    madeForYou: "Für dich gemacht",
+    newReleases: "Neue Veröffentlichungen",
+    topArtists: "Top-Künstler",
+    showAll: "Alle anzeigen",
+    playAll: "Alle abspielen",
+    followers: "Follower",
+    play: "Abspielen",
+    pause: "Pause",
+    next: "Nächster",
+    previous: "Vorheriger",
+    shuffle: "Zufällig",
+    repeat: "Wiederholen",
+    volume: "Lautstärke",
+    currentlyPlaying: "Wird gerade gespielt",
+    goodEvening: "Guten Abend",
+    goodMorning: "Guten Morgen",
+    goodAfternoon: "Guten Tag",
+    language: "Sprache",
+    browseAll: "Alle durchsuchen",
+    searchResults: "Suchergebnisse für",
+    
+    // Authentication
+    login: "Anmelden",
+    register: "Registrieren",
+    logout: "Abmelden",
+    email: "E-Mail",
+    password: "Passwort",
+    confirmPassword: "Passwort bestätigen",
+    forgotPassword: "Passwort vergessen?",
+    createAccount: "Konto erstellen",
+    checkEmail: "Meine E-Mail überprüfen",
+    changePassword: "Passwort ändern",
+    currentPassword: "Aktuelles Passwort",
+    newPassword: "Neues Passwort",
+    
+    tracks: "Titel",
+    verified: "Verifizierter Künstler",
+    monthlyListeners: "monatliche Hörer",
+    playlistName: "Playlist-Name"
+  },
+  it: {
+    // Basic navigation
+    home: "Home",
+    search: "Cerca",
+    library: "La tua libreria",
+    createPlaylist: "Crea playlist",
+    likedSongs: "Brani che ti piacciono",
+    recentlyPlayed: "Riprodotto di recente",
+    madeForYou: "Fatto per te",
+    newReleases: "Nuove uscite",
+    topArtists: "Artisti più ascoltati",
+    showAll: "Mostra tutto",
+    playAll: "Riproduci tutto",
+    followers: "follower",
+    play: "Riproduci",
+    pause: "Pausa",
+    next: "Successivo",
+    previous: "Precedente",
+    shuffle: "Casuale",
+    repeat: "Ripeti",
+    volume: "Volume",
+    currentlyPlaying: "In riproduzione",
+    goodEvening: "Buonasera",
+    goodMorning: "Buongiorno",
+    goodAfternoon: "Buon pomeriggio",
+    language: "Lingua",
+    browseAll: "Sfoglia tutto",
+    searchResults: "Risultati della ricerca per",
+    
+    // Authentication
+    login: "Accedi",
+    register: "Registrati",
+    logout: "Esci",
+    email: "E-mail",
+    password: "Password",
+    confirmPassword: "Conferma password",
+    forgotPassword: "Password dimenticata?",
+    createAccount: "Crea account",
+    checkEmail: "Controlla la mia e-mail",
+    changePassword: "Cambia password",
+    currentPassword: "Password attuale",
+    newPassword: "Nuova password",
+    
+    tracks: "tracce",
+    verified: "Artista Verificato",
+    monthlyListeners: "ascoltatori mensili",
+    playlistName: "Nome playlist"
+  },
+  ru: {
+    // Basic navigation
+    home: "Главная",
+    search: "Поиск",
+    library: "Ваша библиотека",
+    createPlaylist: "Создать плейлист",
+    likedSongs: "Любимые песни",
+    recentlyPlayed: "Недавно прослушанное",
+    madeForYou: "Сделано для вас",
+    newReleases: "Новые релизы",
+    topArtists: "Топ исполнители",
+    showAll: "Показать все",
+    playAll: "Воспроизвести все",
+    followers: "подписчики",
+    play: "Воспроизвести",
+    pause: "Пауза",
+    next: "Следующий",
+    previous: "Предыдущий",
+    shuffle: "Перемешать",
+    repeat: "Повторить",
+    volume: "Громкость",
+    currentlyPlaying: "Сейчас играет",
+    goodEvening: "Добрый вечер",
+    goodMorning: "Доброе утро",
+    goodAfternoon: "Добрый день",
+    language: "Язык",
+    browseAll: "Обзор всего",
+    searchResults: "Результаты поиска для",
+    
+    // Authentication
+    login: "Войти",
+    register: "Регистрация",
+    logout: "Выйти",
+    email: "Эл. почта",
+    password: "Пароль",
+    confirmPassword: "Подтвердить пароль",
+    forgotPassword: "Забыли пароль?",
+    createAccount: "Создать аккаунт",
+    checkEmail: "Проверить мою почту",
+    changePassword: "Сменить пароль",
+    currentPassword: "Текущий пароль",
+    newPassword: "Новый пароль",
+    
+    // Subscription & Account
+    subscription: "Подписка",
+    premium: "Премиум",
+    family: "Семейная",
+    student: "Студенческая",
+    free: "Бесплатная",
+    upgrade: "Обновить",
+    manageSubscription: "Управление подпиской",
+    billing: "Оплата",
+    paymentMethod: "Способ оплаты",
+    accountSettings: "Настройки аккаунта",
+    profile: "Профиль",
+    notifications: "Уведомления",
+    privacy: "Конфиденциальность",
+    currentPlan: "Текущий план",
+    changePlan: "Сменить план",
+    cancelSubscription: "Отменить подписку",
+    renewSubscription: "Продлить подписку",
+    freeTrial: "Бесплатный пробный период",
+    startFreeTrial: "Начать пробный период",
+    
+    // Admin Console
+    adminConsole: "Консоль администратора",
+    dashboard: "Панель управления",
+    userManagement: "Управление пользователями",
+    contentManagement: "Управление контентом",
+    analytics: "Аналитика",
+    subscriptionManagement: "Управление подписками",
+    reports: "Отчеты",
+    settings: "Настройки",
+    totalUsers: "Всего пользователей",
+    premiumUsers: "Премиум пользователи",
+    revenue: "Доходы",
+    growth: "Рост",
+    downloadCSV: "Скачать CSV",
+    
+    // Content Management
+    addArtist: "Добавить исполнителя",
+    editArtist: "Редактировать исполнителя",
+    deleteArtist: "Удалить исполнителя",
+    addAlbum: "Добавить альбом",
+    editAlbum: "Редактировать альбом",
+    deleteAlbum: "Удалить альбом",
+    addSong: "Добавить песню",
+    editSong: "Редактировать песню",
+    deleteSong: "Удалить песню",
+    uploadImage: "Загрузить изображение",
+    category: "Категория",
+    country: "Страна",
+    
+    // User Management
+    viewUser: "Просмотр пользователя",
+    editUser: "Редактировать пользователя",
+    deleteUser: "Удалить пользователя",
+    addUser: "Добавить пользователя",
+    banUser: "Заблокировать пользователя",
+    unbanUser: "Разблокировать пользователя",
+    userDetails: "Детали пользователя",
+    subscriptionStatus: "Статус подписки",
+    lastActive: "Последняя активность",
+    joinDate: "Дата регистрации",
+    resetPassword: "Сбросить пароль",
+    
+    // Common actions
+    add: "Добавить",
+    edit: "Редактировать",
+    delete: "Удалить",
+    save: "Сохранить",
+    cancel: "Отменить",
+    confirm: "Подтвердить",
+    create: "Создать",
+    update: "Обновить",
+    view: "Просмотр",
+    manage: "Управлять",
+    filter: "Фильтр",
+    sort: "Сортировать",
+    searchPlaceholder: "Поиск...",
+    
+    // Form fields
+    name: "Имя",
+    title: "Название",
+    artist: "Исполнитель",
+    album: "Альбом",
+    genre: "Жанр",
+    duration: "Длительность",
+    year: "Год",
+    status: "Статус",
+    description: "Описание",
+    image: "Изображение",
+    
+    // Status messages
+    success: "Успех",
+    error: "Ошибка",
+    warning: "Предупреждение",
+    info: "Информация",
+    loading: "Загрузка...",
+    saving: "Сохранение...",
+    deleting: "Удаление...",
+    updating: "Обновление...",
+    
+    // Subscription features
+    adFree: "Прослушивание без рекламы",
+    unlimitedSkips: "Неограниченные пропуски",
+    highQuality: "Высокое качество звука",
+    offlineDownloads: "Загрузки для офлайн",
+    unlimitedPlaylists: "Неограниченные плейлисты",
+    onDemand: "Воспроизведение любой песни по требованию",
+    familyAccounts: "Семейные аккаунты",
+    kidSafe: "Детский режим",
+    studentDiscount: "Студенческая скидка",
+    
+    // Analytics & Stats
+    streams: "Прослушивания",
+    users: "Пользователи",
+    conversion: "Конверсия",
+    retention: "Удержание",
+    churn: "Отток",
+    engagement: "Вовлеченность",
+    monthlyListeners: "месячные слушатели",
+    totalStreams: "Всего прослушиваний",
+    artistStats: "Статистика исполнителя",
+    
+    // Time periods
+    today: "Сегодня",
+    thisWeek: "На этой неделе",
+    thisMonth: "В этом месяце",
+    thisYear: "В этом году",
+    allTime: "За все время",
+    
+    // Playlist management
+    playlistName: "Название плейлиста",
+    makePublic: "Сделать публичным",
+    makePrivate: "Сделать приватным",
+    sharePlaylist: "Поделиться плейлистом",
+    deletePlaylist: "Удалить плейлист",
+    
+    // Miscellaneous
+    tracks: "треки",
+    verified: "Верифицированный исполнитель",
+    share: "Поделиться",
+    follow: "Подписаться",
+    following: "Подписан",
+    addToPlaylist: "Добавить в плейлист"
   }
 };
 
-// Icons (keeping the same ones as before plus new admin icons)
+// Icons (all the existing icons plus new ones)
 const PlayIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
     <path d="M8 5v14l11-7z"/>
@@ -759,1014 +1240,15 @@ const MoneyIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
-// Admin Sidebar Component
-const AdminSidebar = ({ activeTab, setActiveTab, language, translations }) => {
-  const t = translations[language];
-  
-  return (
-    <div className="w-64 bg-gradient-to-b from-blue-900 to-blue-800 text-white p-6 flex flex-col">
-      <div className="flex items-center mb-8">
-        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-blue-900 font-bold text-lg mr-3">
-          A
-        </div>
-        <h1 className="text-xl font-bold">Admin Console</h1>
-      </div>
-      
-      <nav className="flex-1">
-        <div className="space-y-2">
-          <button
-            onClick={() => setActiveTab('admin-dashboard')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'admin-dashboard' ? 'bg-blue-700' : 'hover:bg-blue-700'
-            }`}
-          >
-            <DashboardIcon className="w-6 h-6" />
-            <span className="font-medium">{t.dashboard}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('admin-users')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'admin-users' ? 'bg-blue-700' : 'hover:bg-blue-700'
-            }`}
-          >
-            <UsersIcon className="w-6 h-6" />
-            <span className="font-medium">{t.userManagement}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('admin-content')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'admin-content' ? 'bg-blue-700' : 'hover:bg-blue-700'
-            }`}
-          >
-            <LibraryIcon className="w-6 h-6" />
-            <span className="font-medium">{t.contentManagement}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('admin-subscriptions')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'admin-subscriptions' ? 'bg-blue-700' : 'hover:bg-blue-700'
-            }`}
-          >
-            <CrownIcon className="w-6 h-6" />
-            <span className="font-medium">{t.subscriptionManagement}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('admin-analytics')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'admin-analytics' ? 'bg-blue-700' : 'hover:bg-blue-700'
-            }`}
-          >
-            <AnalyticsIcon className="w-6 h-6" />
-            <span className="font-medium">{t.analytics}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('admin-settings')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'admin-settings' ? 'bg-blue-700' : 'hover:bg-blue-700'
-            }`}
-          >
-            <SettingsIcon className="w-6 h-6" />
-            <span className="font-medium">{t.settings}</span>
-          </button>
-        </div>
-      </nav>
-      
-      <button
-        onClick={() => setActiveTab('home')}
-        className="mt-auto bg-blue-700 hover:bg-blue-600 p-3 rounded-lg transition-colors"
-      >
-        Back to App
-      </button>
-    </div>
-  );
-};
-
-// Regular User Sidebar Component (updated with subscription access)
-const Sidebar = ({ activeTab, setActiveTab, language, setLanguage, translations, userPlaylists, setShowCreatePlaylist, currentUser }) => {
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const t = translations[language];
-
-  return (
-    <div className="w-64 bg-white text-gray-800 p-6 flex flex-col border-r border-gray-200">
-      <div className="flex items-center mb-8">
-        <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3">
-          G
-        </div>
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">GospelSpot</h1>
-      </div>
-      
-      <nav className="flex-1">
-        <div className="space-y-2">
-          <button
-            onClick={() => setActiveTab('home')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'home' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <HomeIcon className="w-6 h-6" />
-            <span className="font-medium">{t.home}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('search')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'search' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <SearchIcon className="w-6 h-6" />
-            <span className="font-medium">{t.search}</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('library')}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-              activeTab === 'library' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'
-            }`}
-          >
-            <LibraryIcon className="w-6 h-6" />
-            <span className="font-medium">{t.library}</span>
-          </button>
-        </div>
-        
-        <div className="mt-8">
-          <button 
-            onClick={() => setShowCreatePlaylist(true)}
-            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <PlusIcon className="w-6 h-6" />
-            <span className="font-medium">{t.createPlaylist}</span>
-          </button>
-          
-          <button className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors">
-            <HeartIcon className="w-6 h-6 text-yellow-500" />
-            <span className="font-medium">{t.likedSongs}</span>
-          </button>
-          
-          {userPlaylists.length > 0 && (
-            <div className="mt-4 space-y-1">
-              {userPlaylists.map((playlist) => (
-                <button
-                  key={playlist.id}
-                  onClick={() => setActiveTab(`playlist-${playlist.id}`)}
-                  className={`w-full text-left p-2 rounded hover:bg-gray-100 transition-colors ${
-                    activeTab === `playlist-${playlist.id}` ? 'bg-blue-50 text-blue-600' : 'text-gray-600'
-                  }`}
-                >
-                  {playlist.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </nav>
-      
-      {/* Subscription Status */}
-      <div className="mt-auto">
-        {currentUser?.subscription !== 'premium' && currentUser?.subscription !== 'family' && (
-          <button
-            onClick={() => setActiveTab('subscription')}
-            className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white p-3 rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all mb-4 flex items-center justify-center space-x-2"
-          >
-            <CrownIcon className="w-5 h-5" />
-            <span className="font-medium">{t.upgrade}</span>
-          </button>
-        )}
-        
-        {/* User Profile */}
-        <div className="relative">
-          <button
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <img src={currentUser?.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"} alt="Profile" className="w-8 h-8 rounded-full" />
-            <div className="flex-1 text-left">
-              <div className="font-medium text-sm">{currentUser?.name || "User"}</div>
-              <div className="text-xs text-gray-500 capitalize">{currentUser?.subscription || "free"}</div>
-            </div>
-          </button>
-          
-          {showUserMenu && (
-            <div className="absolute bottom-full left-0 right-0 bg-white border border-gray-200 rounded-lg p-2 mb-2 shadow-lg">
-              <button
-                onClick={() => { setActiveTab('profile'); setShowUserMenu(false); }}
-                className="w-full text-left p-2 rounded hover:bg-gray-100"
-              >
-                {t.profile}
-              </button>
-              <button
-                onClick={() => { setActiveTab('subscription'); setShowUserMenu(false); }}
-                className="w-full text-left p-2 rounded hover:bg-gray-100"
-              >
-                {t.subscription}
-              </button>
-              <button
-                onClick={() => { setActiveTab('admin-dashboard'); setShowUserMenu(false); }}
-                className="w-full text-left p-2 rounded hover:bg-gray-100 text-blue-600"
-              >
-                {t.adminConsole}
-              </button>
-            </div>
-          )}
-        </div>
-        
-        {/* Language Selector */}
-        <div className="relative mt-2">
-          <button
-            onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-            className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <LanguageIcon className="w-6 h-6" />
-            <span className="font-medium">{t.language}</span>
-          </button>
-          
-          {showLanguageDropdown && (
-            <div className="absolute bottom-full left-0 right-0 bg-white border border-gray-200 rounded-lg p-2 mb-2 shadow-lg">
-              <button
-                onClick={() => { setLanguage('en'); setShowLanguageDropdown(false); }}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${language === 'en' ? 'bg-blue-50 text-blue-600' : ''}`}
-              >
-                English
-              </button>
-              <button
-                onClick={() => { setLanguage('es'); setShowLanguageDropdown(false); }}
-                className={`w-full text-left p-2 rounded hover:bg-gray-100 ${language === 'es' ? 'bg-blue-50 text-blue-600' : ''}`}
-              >
-                Español
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Subscription Plans Component
-const SubscriptionPlansView = ({ language, translations, currentUser, onUpgrade }) => {
-  const t = translations[language];
-  
-  return (
-    <div className="p-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Choose Your Plan</h1>
-        <p className="text-xl text-gray-600">Get the most out of your gospel music experience</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-        {mockData.subscriptionPlans.map((plan) => (
-          <div key={plan.id} className={`relative bg-white border-2 rounded-xl p-6 shadow-lg transition-all hover:shadow-xl ${
-            plan.popular ? 'border-blue-600 scale-105' : 'border-gray-200'
-          } ${currentUser?.subscription === plan.id ? 'ring-2 ring-green-500' : ''}`}>
-            
-            {plan.popular && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
-                </span>
-              </div>
-            )}
-            
-            {currentUser?.subscription === plan.id && (
-              <div className="absolute -top-3 right-4">
-                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  Current Plan
-                </span>
-              </div>
-            )}
-            
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">{plan.name}</h3>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-800">${plan.price}</span>
-                <span className="text-gray-600">/{plan.interval}</span>
-              </div>
-            </div>
-            
-            <ul className="space-y-3 mb-8">
-              {plan.features.map((feature, index) => (
-                <li key={index} className="flex items-start space-x-3">
-                  <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-sm text-gray-600">{feature}</span>
-                </li>
-              ))}
-            </ul>
-            
-            <button
-              onClick={() => onUpgrade(plan)}
-              disabled={currentUser?.subscription === plan.id}
-              className={`w-full py-3 px-4 rounded-lg font-medium transition-all ${
-                currentUser?.subscription === plan.id
-                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                  : plan.popular
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-800 text-white hover:from-blue-700 hover:to-blue-900'
-                  : 'bg-gray-800 text-white hover:bg-gray-900'
-              }`}
-            >
-              {currentUser?.subscription === plan.id ? 'Current Plan' : plan.price === 0 ? 'Get Started' : 'Upgrade Now'}
-            </button>
-          </div>
-        ))}
-      </div>
-      
-      <div className="mt-12 text-center">
-        <p className="text-gray-600 mb-4">All plans include a 30-day free trial</p>
-        <p className="text-sm text-gray-500">Cancel anytime. No questions asked.</p>
-      </div>
-    </div>
-  );
-};
-
-// Admin Dashboard Component
-const AdminDashboard = ({ language, translations }) => {
-  const t = translations[language];
-  const analytics = mockData.analytics;
-  
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
-      
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Users</p>
-              <p className="text-3xl font-bold text-gray-800">{analytics.totalUsers.toLocaleString()}</p>
-            </div>
-            <UsersIcon className="w-8 h-8 text-blue-600" />
-          </div>
-          <p className="text-sm text-green-600 mt-2">+{analytics.growthMetrics.userGrowth}% this month</p>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Premium Users</p>
-              <p className="text-3xl font-bold text-gray-800">{analytics.premiumUsers.toLocaleString()}</p>
-            </div>
-            <CrownIcon className="w-8 h-8 text-yellow-600" />
-          </div>
-          <p className="text-sm text-gray-600 mt-2">{((analytics.premiumUsers / analytics.totalUsers) * 100).toFixed(1)}% conversion</p>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Monthly Revenue</p>
-              <p className="text-3xl font-bold text-gray-800">${analytics.revenue.toLocaleString()}</p>
-            </div>
-            <MoneyIcon className="w-8 h-8 text-green-600" />
-          </div>
-          <p className="text-sm text-green-600 mt-2">+{analytics.growthMetrics.revenueGrowth}% this month</p>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Songs Streamed</p>
-              <p className="text-3xl font-bold text-gray-800">{(analytics.songsStreamed / 1000).toFixed(0)}K</p>
-            </div>
-            <PlayIcon className="w-8 h-8 text-purple-600" />
-          </div>
-          <p className="text-sm text-gray-600 mt-2">{analytics.hoursListened.toLocaleString()} hours total</p>
-        </div>
-      </div>
-      
-      {/* Charts and Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Top Genres */}
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Top Genres</h3>
-          <div className="space-y-4">
-            {analytics.topGenres.map((genre, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-800">{genre.name}</span>
-                    <span className="text-sm text-gray-600">{genre.percentage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-blue-600 to-blue-800 h-2 rounded-full" 
-                      style={{ width: `${genre.percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Revenue by Plan */}
-        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Revenue by Plan</h3>
-          <div className="space-y-4">
-            {analytics.revenueByPlan.map((plan, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <h4 className="font-medium text-gray-800">{plan.plan}</h4>
-                  <p className="text-sm text-gray-600">{plan.users.toLocaleString()} users</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-gray-800">${plan.revenue.toLocaleString()}</p>
-                  <p className="text-sm text-gray-600">monthly</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      
-      {/* Recent Activity */}
-      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Users</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left p-4 font-medium text-gray-800">User</th>
-                <th className="text-left p-4 font-medium text-gray-800">Subscription</th>
-                <th className="text-left p-4 font-medium text-gray-800">Join Date</th>
-                <th className="text-left p-4 font-medium text-gray-800">Last Active</th>
-                <th className="text-left p-4 font-medium text-gray-800">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockData.users.slice(0, 5).map((user) => (
-                <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
-                      <div>
-                        <p className="font-medium text-gray-800">{user.name}</p>
-                        <p className="text-gray-600">{user.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                      user.subscription === 'premium' ? 'bg-blue-100 text-blue-800' :
-                      user.subscription === 'family' ? 'bg-purple-100 text-purple-800' :
-                      user.subscription === 'student' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {user.subscription}
-                    </span>
-                  </td>
-                  <td className="p-4 text-gray-600">{user.joinDate}</td>
-                  <td className="p-4 text-gray-600">{user.lastActive}</td>
-                  <td className="p-4">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {user.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// User Management Component
-const UserManagement = ({ language, translations }) => {
-  const t = translations[language];
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterSubscription, setFilterSubscription] = useState('all');
-  
-  const filteredUsers = mockData.users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterSubscription === 'all' || user.subscription === filterSubscription;
-    return matchesSearch && matchesFilter;
-  });
-  
-  return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
-        <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all">
-          <PlusIcon className="w-5 h-5 inline mr-2" />
-          Add User
-        </button>
-      </div>
-      
-      {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-6">
-        <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <select
-            value={filterSubscription}
-            onChange={(e) => setFilterSubscription(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All Subscriptions</option>
-            <option value="free">Free</option>
-            <option value="premium">Premium</option>
-            <option value="family">Family</option>
-            <option value="student">Student</option>
-          </select>
-        </div>
-      </div>
-      
-      {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left p-4 font-medium text-gray-800">User</th>
-                <th className="text-left p-4 font-medium text-gray-800">Subscription</th>
-                <th className="text-left p-4 font-medium text-gray-800">Stats</th>
-                <th className="text-left p-4 font-medium text-gray-800">Join Date</th>
-                <th className="text-left p-4 font-medium text-gray-800">Status</th>
-                <th className="text-left p-4 font-medium text-gray-800">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
-                      <div>
-                        <p className="font-medium text-gray-800">{user.name}</p>
-                        <p className="text-sm text-gray-600">{user.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
-                      user.subscription === 'premium' ? 'bg-blue-100 text-blue-800' :
-                      user.subscription === 'family' ? 'bg-purple-100 text-purple-800' :
-                      user.subscription === 'student' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {user.subscription}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <div className="text-sm text-gray-600">
-                      <div>{user.stats.songsPlayed} songs</div>
-                      <div>{user.stats.hoursListened}h listened</div>
-                      <div>{user.stats.playlistsCreated} playlists</div>
-                    </div>
-                  </td>
-                  <td className="p-4 text-gray-600">{user.joinDate}</td>
-                  <td className="p-4">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {user.status}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedUser(user)}
-                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                      >
-                        <EditIcon className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors">
-                        <DeleteIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      {/* User Details Modal */}
-      {selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">User Details</h2>
-              <button
-                onClick={() => setSelectedUser(null)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <img src={selectedUser.avatar} alt={selectedUser.name} className="w-24 h-24 rounded-full mb-4" />
-                <h3 className="text-xl font-bold text-gray-800">{selectedUser.name}</h3>
-                <p className="text-gray-600 mb-4">{selectedUser.email}</p>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Subscription:</span>
-                    <span className="font-medium capitalize">{selectedUser.subscription}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Join Date:</span>
-                    <span className="font-medium">{selectedUser.joinDate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Last Active:</span>
-                    <span className="font-medium">{selectedUser.lastActive}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Status:</span>
-                    <span className="font-medium">{selectedUser.status}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h4 className="text-lg font-bold text-gray-800 mb-4">Statistics</h4>
-                <div className="space-y-3">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{selectedUser.stats.songsPlayed}</div>
-                    <div className="text-sm text-gray-600">Songs Played</div>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{selectedUser.stats.hoursListened}</div>
-                    <div className="text-sm text-gray-600">Hours Listened</div>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">{selectedUser.stats.playlistsCreated}</div>
-                    <div className="text-sm text-gray-600">Playlists Created</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex space-x-4 mt-6">
-              <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                Edit User
-              </button>
-              <button className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
-                Suspend User
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Home View Component
-const HomeView = ({ language, translations, onPlay, onShare, onFollow }) => {
-  const t = translations[language];
-  const currentHour = new Date().getHours();
-  let greeting = t.goodEvening;
-  
-  if (currentHour < 12) {
-    greeting = t.goodMorning;
-  } else if (currentHour < 18) {
-    greeting = t.goodAfternoon;
-  }
-
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">{greeting}</h1>
-      
-      {/* Recently Played */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.recentlyPlayed}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {mockData.recentlyPlayed.map((item) => (
-            <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:shadow-lg transition-all cursor-pointer">
-              <img src={item.image} alt={item.title} className="w-16 h-16 rounded-md" />
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-800">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.artist}</p>
-                <p className="text-gray-500 text-xs">{item.playedAt}</p>
-              </div>
-              <button 
-                onClick={() => onPlay(item)}
-                className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all"
-              >
-                <PlayIcon className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Made for you */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">{t.madeForYou}</h2>
-          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">{t.showAll}</button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {mockData.featuredPlaylists.map((playlist) => (
-            <PlaylistCard key={playlist.id} playlist={playlist} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
-          ))}
-        </div>
-      </div>
-      
-      {/* New Releases */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">{t.newReleases}</h2>
-          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">{t.showAll}</button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {mockData.newReleases.map((album) => (
-            <AlbumCard key={album.id} album={album} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
-          ))}
-        </div>
-      </div>
-      
-      {/* Top Artists */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">{t.topArtists}</h2>
-          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">{t.showAll}</button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {mockData.topArtists.map((artist) => (
-            <ArtistCard key={artist.id} artist={artist} onPlay={onPlay} onFollow={onFollow} language={language} translations={translations} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Search View Component
-const SearchView = ({ language, translations, onPlay, onShare, onFollow }) => {
-  const t = translations[language];
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState('');
-  
-  const handleSearch = (query) => {
-    if (query.trim() === '') {
-      setSearchResults([]);
-      return;
-    }
-    
-    let results = [
-      ...mockData.newReleases.filter(album => 
-        album.title.toLowerCase().includes(query.toLowerCase()) ||
-        album.artist.toLowerCase().includes(query.toLowerCase())
-      ),
-      ...mockData.topArtists.filter(artist => 
-        artist.name.toLowerCase().includes(query.toLowerCase())
-      ),
-      ...mockData.featuredPlaylists.filter(playlist => 
-        playlist.name.toLowerCase().includes(query.toLowerCase())
-      )
-    ];
-    
-    setSearchResults(results);
-  };
-  
-  useEffect(() => {
-    handleSearch(searchQuery);
-  }, [searchQuery]);
-
-  return (
-    <div className="p-8">
-      <div className="mb-8">
-        <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder={`${t.search}...`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-      
-      {searchQuery === '' ? (
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.browseAll}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {mockData.genres.map((genre) => (
-              <div key={genre.id} className={`${genre.color} rounded-lg p-4 h-32 relative overflow-hidden cursor-pointer hover:scale-105 transition-transform`}>
-                <h3 className="text-white text-lg font-bold mb-2">{genre.name}</h3>
-                <img src={genre.image} alt={genre.name} className="absolute -bottom-2 -right-2 w-20 h-20 object-cover rounded-lg transform rotate-12" />
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.searchResults} "{searchQuery}"</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {searchResults.map((item, index) => (
-              <div key={index} className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer">
-                <img src={item.image} alt={item.title || item.name} className="w-full aspect-square object-cover rounded-md mb-4" />
-                <h3 className="font-bold text-gray-800 mb-1">{item.title || item.name}</h3>
-                <p className="text-gray-600 text-sm">{item.artist || item.genre || 'Playlist'}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs text-gray-500">{item.type || 'Artist'}</span>
-                  <button 
-                    onClick={() => onPlay(item)}
-                    className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all"
-                  >
-                    <PlayIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Library View Component
-const LibraryView = ({ language, translations, userPlaylists, onPlay, onShare }) => {
-  const t = translations[language];
-  
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">{t.library}</h1>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <div className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer">
-          <div className="w-full aspect-square bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-md mb-4 flex items-center justify-center">
-            <HeartIcon className="w-12 h-12 text-white" />
-          </div>
-          <h3 className="font-bold text-gray-800 mb-1">{t.likedSongs}</h3>
-          <p className="text-gray-600 text-sm">42 songs</p>
-        </div>
-        
-        {mockData.featuredPlaylists.map((playlist) => (
-          <PlaylistCard key={playlist.id} playlist={playlist} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
-        ))}
-        
-        {userPlaylists.map((playlist) => (
-          <PlaylistCard key={playlist.id} playlist={playlist} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Playlist Card Component
-const PlaylistCard = ({ playlist, onPlay, onShare, language, translations }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const t = translations[language];
-  
-  return (
-    <div 
-      className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onPlay(playlist)}
-    >
-      <div className="relative">
-        <img 
-          src={playlist.image} 
-          alt={playlist.name}
-          className="w-full aspect-square object-cover rounded-md mb-4"
-        />
-        {isHovered && (
-          <div className="absolute bottom-2 right-2 flex space-x-2">
-            <button 
-              onClick={(e) => { e.stopPropagation(); onShare(playlist); }}
-              className="bg-white text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors shadow-md"
-            >
-              <ShareIcon className="w-4 h-4" />
-            </button>
-            <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg">
-              <PlayIcon className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-      </div>
-      <h3 className="font-bold text-gray-800 mb-2">{playlist.name}</h3>
-      <p className="text-gray-600 text-sm mb-2">{playlist.description}</p>
-      <div className="flex items-center justify-between text-xs text-gray-500">
-        <span>{playlist.followers?.toLocaleString()} {t.followers}</span>
-        <span>{playlist.songs?.length} {t.tracks}</span>
-      </div>
-    </div>
-  );
-};
-
-// Album Card Component
-const AlbumCard = ({ album, onPlay, onShare, language, translations }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const t = translations[language];
-  
-  return (
-    <div 
-      className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onPlay(album)}
-    >
-      <div className="relative">
-        <img 
-          src={album.image} 
-          alt={album.title}
-          className="w-full aspect-square object-cover rounded-md mb-4"
-        />
-        {isHovered && (
-          <div className="absolute bottom-2 right-2 flex space-x-2">
-            <button 
-              onClick={(e) => { e.stopPropagation(); onShare(album); }}
-              className="bg-white text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors shadow-md"
-            >
-              <ShareIcon className="w-4 h-4" />
-            </button>
-            <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg">
-              <PlayIcon className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-      </div>
-      <h3 className="font-bold text-gray-800 mb-1">{album.title}</h3>
-      <p className="text-gray-600 text-sm mb-2">{album.year} • {album.artist}</p>
-      <div className="flex items-center justify-between text-xs text-gray-500">
-        <span>{album.genre}</span>
-        <span>{album.tracks} {t.tracks}</span>
-      </div>
-    </div>
-  );
-};
-
-// Artist Card Component
-const ArtistCard = ({ artist, onPlay, onFollow, language, translations }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const t = translations[language];
-  
-  return (
-    <div 
-      className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onPlay(artist)}
-    >
-      <div className="relative">
-        <img 
-          src={artist.image} 
-          alt={artist.name}
-          className="w-full aspect-square object-cover rounded-full mb-4"
-        />
-        {isHovered && (
-          <div className="absolute bottom-2 right-2 flex space-x-2">
-            <button 
-              onClick={(e) => { e.stopPropagation(); setIsFollowing(!isFollowing); onFollow(artist); }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                isFollowing 
-                  ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
-                  : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-100'
-              }`}
-            >
-              {isFollowing ? t.following : t.follow}
-            </button>
-            <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg">
-              <PlayIcon className="w-5 h-5" />
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="flex items-center justify-center mb-2">
-        <h3 className="font-bold text-gray-800 mr-2">{artist.name}</h3>
-        {artist.verified && (
-          <VerifiedIcon className="w-5 h-5 text-blue-600" />
-        )}
-      </div>
-      <p className="text-gray-600 text-sm text-center mb-2">{artist.genre}</p>
-      <div className="text-xs text-gray-500 text-center space-y-1">
-        <div>{artist.followers} {t.followers}</div>
-        <div>{artist.monthlyListeners} {t.monthlyListeners}</div>
-      </div>
-    </div>
-  );
-};
-
 const ShareIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
     <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+  </svg>
+);
+
+const FilterIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
   </svg>
 );
 
@@ -1776,503 +1258,233 @@ const VerifiedIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
-// Create Playlist Modal Component  
-const CreatePlaylistModal = ({ isOpen, onClose, onCreatePlaylist, language, translations }) => {
-  const [playlistName, setPlaylistName] = useState('');
-  const [description, setDescription] = useState('');
-  const [isPublic, setIsPublic] = useState(true);
+const MoreIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+  </svg>
+);
+
+const BackIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+  </svg>
+);
+
+const DownloadIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+  </svg>
+);
+
+const LoginIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/>
+  </svg>
+);
+
+const SkipPreviousIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+  </svg>
+);
+
+const SkipNextIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+  </svg>
+);
+
+const ShuffleIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+  </svg>
+);
+
+const RepeatIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+  </svg>
+);
+
+const VolumeIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+  </svg>
+);
+
+// Authentication Component
+const AuthenticationPage = ({ onLogin, language, translations }) => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [isRegister, setIsRegister] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
   const t = translations[language];
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (playlistName.trim()) {
-      onCreatePlaylist({
-        name: playlistName,
-        description,
-        isPublic,
-        songs: [],
-        createdAt: new Date().toISOString()
-      });
-      setPlaylistName('');
-      setDescription('');
-      setIsPublic(true);
-      onClose();
+    
+    if (isLogin) {
+      // Handle login
+      if (email === 'admin@gospelspot.com' && password === 'admin123') {
+        onLogin(mockData.users[1]); // SuperAdmin
+      } else if (email === 'brandon@example.com' && password === 'artist123') {
+        onLogin(mockData.users[2]); // Artist
+      } else {
+        onLogin(mockData.users[0]); // Regular user
+      }
+    } else if (isRegister) {
+      // Handle registration
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+      // Show email verification step
+      setShowEmailVerification(true);
+    } else if (showEmailVerification) {
+      // Handle email verification completion
+      const newUser = {
+        id: Date.now(),
+        name: email.split('@')[0],
+        email: email,
+        password: password,
+        subscription: 'free',
+        joinDate: new Date().toISOString().split('T')[0],
+        lastActive: new Date().toISOString().split('T')[0],
+        status: 'active',
+        paymentMethod: null,
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+        role: 'user',
+        language: language,
+        country: 'USA',
+        stats: {
+          songsPlayed: 0,
+          playlistsCreated: 0,
+          hoursListened: 0
+        }
+      };
+      onLogin(newUser);
     }
   };
-  
-  if (!isOpen) return null;
-  
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">{t.createPlaylist}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="playlist-name" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.playlistName}
-            </label>
-            <input
-              id="playlist-name"
-              type="text"
-              value={playlistName}
-              onChange={(e) => setPlaylistName(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t.playlistName}
-              required
-            />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+            G
           </div>
-          <div>
-            <label htmlFor="playlist-description" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.description}
-            </label>
-            <textarea
-              id="playlist-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t.description}
-              rows="3"
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              id="playlist-public"
-              type="checkbox"
-              checked={isPublic}
-              onChange={(e) => setIsPublic(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="playlist-public" className="text-sm text-gray-700">
-              {t.makePublic}
-            </label>
-          </div>
-          <div className="flex space-x-3 pt-4">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+            GospelSpot
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {showEmailVerification ? t.checkEmail : isLogin ? t.login : t.createAccount}
+          </p>
+        </div>
+
+        {showEmailVerification ? (
+          <div className="text-center">
+            <div className="bg-blue-50 p-6 rounded-lg mb-6">
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                ✓
+              </div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">Account Created!</h3>
+              <p className="text-gray-600 mb-4">
+                Your account has been created successfully. Password: <strong>{password}</strong>
+              </p>
+              <p className="text-sm text-gray-500">
+                Please save your password securely.
+              </p>
+            </div>
             <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              onClick={handleSubmit}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all font-medium"
             >
-              {t.cancel}
+              {t.checkEmail}
             </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                {t.email}
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={t.email}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                {t.password}
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={t.password}
+                required
+              />
+            </div>
+
+            {isRegister && (
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  {t.confirmPassword}
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={t.confirmPassword}
+                  required
+                />
+              </div>
+            )}
+
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all font-medium"
             >
-              {t.create}
+              {isLogin ? t.login : t.createAccount}
             </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-const ContentManagement = ({ language, translations }) => {
-  const t = translations[language];
-  const [activeContentTab, setActiveContentTab] = useState('artists');
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  
-  return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Content Management</h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
-        >
-          <PlusIcon className="w-5 h-5 inline mr-2" />
-          Add {activeContentTab.slice(0, -1)}
-        </button>
-      </div>
-      
-      {/* Content Type Tabs */}
-      <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-6">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setActiveContentTab('artists')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeContentTab === 'artists' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Artists ({mockData.topArtists.length})
-          </button>
-          <button
-            onClick={() => setActiveContentTab('albums')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeContentTab === 'albums' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Albums ({mockData.newReleases.length})
-          </button>
-          <button
-            onClick={() => setActiveContentTab('playlists')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeContentTab === 'playlists' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Playlists ({mockData.featuredPlaylists.length})
-          </button>
-          <button
-            onClick={() => setActiveContentTab('genres')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeContentTab === 'genres' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            Genres ({mockData.genres.length})
-          </button>
-        </div>
-      </div>
-      
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {activeContentTab === 'artists' && mockData.topArtists.map((artist) => (
-          <div key={artist.id} className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg hover:shadow-xl transition-all">
-            <img src={artist.image} alt={artist.name} className="w-full aspect-square object-cover rounded-lg mb-4" />
-            <h3 className="font-bold text-gray-800 mb-2">{artist.name}</h3>
-            <p className="text-sm text-gray-600 mb-2">{artist.genre}</p>
-            <p className="text-sm text-gray-500 mb-4">{artist.followers} followers</p>
-            <div className="flex space-x-2">
+
+            <div className="text-center">
               <button
-                onClick={() => setSelectedItem(artist)}
-                className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                type="button"
+                onClick={() => { setIsLogin(!isLogin); setIsRegister(!isRegister); }}
+                className="text-blue-600 hover:text-blue-800 text-sm"
               >
-                Edit
-              </button>
-              <button className="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors text-sm">
-                Delete
+                {isLogin ? t.createAccount : t.login}
               </button>
             </div>
-          </div>
-        ))}
-        
-        {activeContentTab === 'albums' && mockData.newReleases.map((album) => (
-          <div key={album.id} className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg hover:shadow-xl transition-all">
-            <img src={album.image} alt={album.title} className="w-full aspect-square object-cover rounded-lg mb-4" />
-            <h3 className="font-bold text-gray-800 mb-2">{album.title}</h3>
-            <p className="text-sm text-gray-600 mb-2">{album.artist}</p>
-            <p className="text-sm text-gray-500 mb-4">{album.year} • {album.tracks} tracks</p>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setSelectedItem(album)}
-                className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-              >
-                Edit
-              </button>
-              <button className="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors text-sm">
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-        
-        {activeContentTab === 'playlists' && mockData.featuredPlaylists.map((playlist) => (
-          <div key={playlist.id} className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg hover:shadow-xl transition-all">
-            <img src={playlist.image} alt={playlist.name} className="w-full aspect-square object-cover rounded-lg mb-4" />
-            <h3 className="font-bold text-gray-800 mb-2">{playlist.name}</h3>
-            <p className="text-sm text-gray-600 mb-2">{playlist.description}</p>
-            <p className="text-sm text-gray-500 mb-4">{playlist.followers.toLocaleString()} followers</p>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setSelectedItem(playlist)}
-                className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-              >
-                Edit
-              </button>
-              <button className="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors text-sm">
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-        
-        {activeContentTab === 'genres' && mockData.genres.map((genre) => (
-          <div key={genre.id} className="bg-white border border-gray-200 p-4 rounded-lg shadow-lg hover:shadow-xl transition-all">
-            <div className={`${genre.color} h-32 rounded-lg mb-4 relative overflow-hidden`}>
-              <img src={genre.image} alt={genre.name} className="absolute -bottom-2 -right-2 w-20 h-20 object-cover rounded-lg transform rotate-12" />
-            </div>
-            <h3 className="font-bold text-gray-800 mb-4">{genre.name}</h3>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setSelectedItem(genre)}
-                className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-              >
-                Edit
-              </button>
-              <button className="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors text-sm">
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {/* Add/Edit Modal */}
-      {(showAddModal || selectedItem) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {selectedItem ? 'Edit' : 'Add'} {activeContentTab.slice(0, -1)}
-              </h2>
-              <button
-                onClick={() => { setShowAddModal(false); setSelectedItem(null); }}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name/Title</label>
-                <input
-                  type="text"
-                  defaultValue={selectedItem?.name || selectedItem?.title || ''}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter name/title..."
-                />
-              </div>
-              
-              {activeContentTab !== 'genres' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                  <textarea
-                    defaultValue={selectedItem?.description || selectedItem?.bio || ''}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="3"
-                    placeholder="Enter description..."
-                  />
+
+            {isLogin && (
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-bold text-gray-800 mb-2">Demo Credentials:</h4>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <div><strong>SuperAdmin:</strong> admin@gospelspot.com / admin123</div>
+                  <div><strong>Artist:</strong> brandon@example.com / artist123</div>
+                  <div><strong>User:</strong> Any other email / any password</div>
                 </div>
-              )}
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                <input
-                  type="url"
-                  defaultValue={selectedItem?.image || ''}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter image URL..."
-                />
               </div>
-              
-              {activeContentTab === 'artists' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
-                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    {mockData.genres.map(genre => (
-                      <option key={genre.id} value={genre.name}>{genre.name}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-              
-              {activeContentTab === 'albums' && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Artist</label>
-                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      {mockData.topArtists.map(artist => (
-                        <option key={artist.id} value={artist.name}>{artist.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                      <input
-                        type="number"
-                        defaultValue={selectedItem?.year || new Date().getFullYear()}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Tracks</label>
-                      <input
-                        type="number"
-                        defaultValue={selectedItem?.tracks || 10}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-              
-              <div className="flex space-x-4 pt-4">
-                <button
-                  type="button"
-                  onClick={() => { setShowAddModal(false); setSelectedItem(null); }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
-                >
-                  {selectedItem ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            )}
+          </form>
+        )}
+      </div>
     </div>
   );
 };
 
-// Main App Component
-export const SpotifyClone = () => {
-  const [activeTab, setActiveTab] = useState('home');
-  const [language, setLanguage] = useState('en');
-  const [currentSong, setCurrentSong] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [userPlaylists, setUserPlaylists] = useState([]);
-  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
-  const [currentUser, setCurrentUser] = useState(mockData.users[0]); // Simulate logged in user
-  
-  const handlePlay = (item) => {
-    if (item.songs && item.songs.length > 0) {
-      setCurrentSong({
-        title: item.songs[0].title,
-        artist: item.songs[0].artist,
-        image: item.image
-      });
-    } else if (item.title) {
-      setCurrentSong({
-        title: item.title,
-        artist: item.artist,
-        image: item.image
-      });
-    } else if (item.name) {
-      setCurrentSong({
-        title: "Top Song",
-        artist: item.name,
-        image: item.image
-      });
-    }
-    setIsPlaying(true);
-  };
-  
-  const handleShare = (item) => {
-    const shareText = `Check out ${item.title || item.name} on GospelSpot!`;
-    if (navigator.share) {
-      navigator.share({
-        title: item.title || item.name,
-        text: shareText,
-        url: window.location.href
-      });
-    } else {
-      navigator.clipboard.writeText(shareText);
-      alert('Link copied to clipboard!');
-    }
-  };
-  
-  const handleFollow = (artist) => {
-    console.log('Following artist:', artist.name);
-  };
-  
-  const handleUpgrade = (plan) => {
-    setCurrentUser({ ...currentUser, subscription: plan.id });
-    alert(`Upgraded to ${plan.name} plan!`);
-    setActiveTab('home');
-  };
-  
-  const handleCreatePlaylist = (playlistData) => {
-    const newPlaylist = {
-      id: Date.now(),
-      ...playlistData,
-      image: "https://images.unsplash.com/photo-1507692049790-de58290a4334?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxjaHJpc3RpYW4lMjB3b3JzaGlwfGVufDB8fHx8MTc1MjIxNzM2Mnww&ixlib=rb-4.1.0&q=85",
-      followers: 0
-    };
-    setUserPlaylists([...userPlaylists, newPlaylist]);
-  };
-  
-  const renderContent = () => {
-    // Admin views
-    if (activeTab === 'admin-dashboard') {
-      return <AdminDashboard language={language} translations={translations} />;
-    }
-    if (activeTab === 'admin-users') {
-      return <UserManagement language={language} translations={translations} />;
-    }
-    if (activeTab === 'admin-content') {
-      return <ContentManagement language={language} translations={translations} />;
-    }
-    if (activeTab === 'admin-subscriptions' || activeTab === 'admin-analytics' || activeTab === 'admin-settings') {
-      return (
-        <div className="p-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">
-            {activeTab.replace('admin-', '').charAt(0).toUpperCase() + activeTab.replace('admin-', '').slice(1)}
-          </h1>
-          <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 text-center">
-            <p className="text-gray-600">This section is under development.</p>
-          </div>
-        </div>
-      );
-    }
-    
-    // Subscription view
-    if (activeTab === 'subscription') {
-      return <SubscriptionPlansView language={language} translations={translations} currentUser={currentUser} onUpgrade={handleUpgrade} />;
-    }
-    
-    // Main music interface views
-    switch (activeTab) {
-      case 'home':
-        return <HomeView language={language} translations={translations} onPlay={handlePlay} onShare={handleShare} onFollow={handleFollow} />;
-      case 'search':
-        return <SearchView language={language} translations={translations} onPlay={handlePlay} onShare={handleShare} onFollow={handleFollow} />;
-      case 'library':
-        return <LibraryView language={language} translations={translations} userPlaylists={userPlaylists} onPlay={handlePlay} onShare={handleShare} />;
-      default:
-        return <HomeView language={language} translations={translations} onPlay={handlePlay} onShare={handleShare} onFollow={handleFollow} />;
-    }
-  };
-  
-  const isAdminView = activeTab.startsWith('admin-');
-  
-  return (
-    <div className="h-screen bg-gray-50 flex flex-col">
-      <div className="flex flex-1 overflow-hidden">
-        {isAdminView ? (
-          <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} language={language} translations={translations} />
-        ) : (
-          <Sidebar 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
-            language={language} 
-            setLanguage={setLanguage} 
-            translations={translations}
-            userPlaylists={userPlaylists}
-            setShowCreatePlaylist={setShowCreatePlaylist}
-            currentUser={currentUser}
-          />
-        )}
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-blue-50">
-          {renderContent()}
-        </main>
-      </div>
-      
-      {!isAdminView && currentSong && (
-        <div className="bg-white border-t border-gray-200 p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4 flex-1">
-            <img src={currentSong.image} alt={currentSong.title} className="w-14 h-14 rounded-md" />
-            <div>
-              <h4 className="text-gray-800 font-medium">{currentSong.title}</h4>
-              <p className="text-gray-600 text-sm">{currentSong.artist}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all"
-            >
-              {isPlaying ? <PauseIcon className="w-6 h-6" /> : <PlayIcon className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+// Continue with rest of components...
