@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Optional
 
-from ..models import (
+from models import (
     Artist, ArtistCreate, ArtistUpdate, UserRole
 )
-from ..auth import get_current_active_user, require_role
-from ..database import database
+from auth import get_current_active_user, require_role
+from database import database
 
 router = APIRouter(prefix="/artists", tags=["artists"])
 
