@@ -206,86 +206,45 @@ class GospelSpotAPITester:
     
     async def test_create_super_admin(self):
         """Create a super admin user for testing admin functions"""
-        # We'll create this directly since we need admin access for other tests
-        admin_data = {
-            'email': 'admin@gospelspot.com',
-            'password': 'AdminPass123!',
-            'first_name': 'Super',
-            'last_name': 'Admin',
-            'role': 'super_admin'
+        # Try to login with the pre-created verified admin
+        admin_credentials = {
+            'email': 'test.admin@gospelspot.com',
+            'password': 'TestAdmin123!'
         }
         
-        success, data, status = await self.make_request('POST', '/auth/register', admin_data)
+        login_success, login_data, login_status = await self.make_request('POST', '/auth/login', admin_credentials)
         
-        if success and status == 200:
+        if login_success and login_status == 200:
+            self.tokens['super_admin'] = login_data.get('access_token')
             self.test_data['super_admin'] = {
-                'user_data': data,
-                'credentials': admin_data
+                'user_data': login_data.get('user'),
+                'credentials': admin_credentials
+            }
+            self.log_result("Login Super Admin", True, "Pre-created admin logged in successfully")
+        else:
+            # If pre-created admin doesn't work, try creating a new one
+            admin_data = {
+                'email': 'admin@gospelspot.com',
+                'password': 'AdminPass123!',
+                'first_name': 'Super',
+                'last_name': 'Admin',
+                'role': 'super_admin'
             }
             
-            # Try to manually verify the email by simulating the verification process
-            # Since we can't get the real token, we'll try a few approaches
+            success, data, status = await self.make_request('POST', '/auth/register', admin_data)
             
-            # First, try to login directly (might work for super admin)
-            login_success, login_data, login_status = await self.make_request('POST', '/auth/login', {
-                'email': admin_data['email'],
-                'password': admin_data['password']
-            })
-            
-            if login_success and login_status == 200:
-                self.tokens['super_admin'] = login_data.get('access_token')
-                self.log_result("Create Super Admin", True, "Super admin created and logged in")
+            if success and status == 200:
+                self.test_data['super_admin'] = {
+                    'user_data': data,
+                    'credentials': admin_data
+                }
+                self.log_result("Create Super Admin", True, "Super admin created (verification required)")
             else:
-                # Try to create another admin using a different approach
-                # Create a regular user first, then try to use admin endpoints
-                self.log_result("Create Super Admin", True, "Super admin created (email verification required)")
-                
-                # Let's try creating a verified user by registering and then manually verifying
-                # This is a workaround for testing purposes
-                await self.try_create_verified_admin()
-        else:
-            self.log_result("Create Super Admin", False, f"Status: {status}, Error: {data}")
+                self.log_result("Create Super Admin", False, f"Status: {status}, Error: {data}")
     
     async def try_create_verified_admin(self):
-        """Try alternative approaches to create a verified admin for testing"""
-        # Approach 1: Try to create a user with a simple verification token
-        simple_tokens = ['simple_token', 'test_token', 'admin_token', '123456']
-        
-        for token in simple_tokens:
-            verify_success, verify_data, verify_status = await self.make_request(
-                'POST', '/auth/verify-email', {'token': token}
-            )
-            if verify_success:
-                # If verification worked, try to login
-                login_success, login_data, login_status = await self.make_request('POST', '/auth/login', {
-                    'email': 'admin@gospelspot.com',
-                    'password': 'AdminPass123!'
-                })
-                if login_success and login_status == 200:
-                    self.tokens['super_admin'] = login_data.get('access_token')
-                    self.log_result("Alternative Admin Creation", True, "Admin verified and logged in")
-                    return
-        
-        # If that doesn't work, let's try creating a user that might be auto-verified
-        # Some systems auto-verify admin accounts
-        auto_admin_data = {
-            'email': 'auto.admin@gospelspot.com',
-            'password': 'AutoAdmin123!',
-            'first_name': 'Auto',
-            'last_name': 'Admin',
-            'role': 'super_admin'
-        }
-        
-        success, data, status = await self.make_request('POST', '/auth/register', auto_admin_data)
-        if success:
-            # Try immediate login
-            login_success, login_data, login_status = await self.make_request('POST', '/auth/login', {
-                'email': auto_admin_data['email'],
-                'password': auto_admin_data['password']
-            })
-            if login_success and login_status == 200:
-                self.tokens['super_admin'] = login_data.get('access_token')
-                self.log_result("Auto-Verified Admin", True, "Auto-verified admin logged in")
+        """This method is no longer needed since we have a pre-created admin"""
+        pass
     
     # ==================== USER MANAGEMENT TESTS ====================
     
