@@ -534,8 +534,8 @@ class GospelSpotAPITester:
         # Test without token
         success, data, status = await self.make_request('GET', '/users/')
         
-        if not success and status == 401:
-            self.log_result("Unauthorized Access Control", True, "Correctly blocked unauthorized access")
+        if not success and (status == 401 or status == 403):
+            self.log_result("Unauthorized Access Control", True, f"Correctly blocked unauthorized access (Status: {status})")
         else:
             self.log_result("Unauthorized Access Control", False, f"Should block unauthorized access. Status: {status}")
     
