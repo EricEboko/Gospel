@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any, List
 from datetime import datetime, timedelta
 
-from ..models import UserRole, PlatformStats, ArtistStats, LabelStats
-from ..auth import get_current_active_user, require_role
-from ..database import database
+from models import UserRole, PlatformStats, ArtistStats, LabelStats
+from auth import get_current_active_user, require_role
+from database import database
 
 router = APIRouter(prefix="/statistics", tags=["statistics"])
 
