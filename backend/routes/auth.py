@@ -3,17 +3,17 @@ from fastapi.security import HTTPBearer
 from datetime import datetime, timedelta
 from typing import Optional
 
-from ..models import (
+from models import (
     UserCreate, UserResponse, LoginRequest, LoginResponse, 
     EmailVerificationRequest, PasswordResetRequest, PasswordResetConfirm,
     UserRole, UserStatus
 )
-from ..auth import (
+from auth import (
     get_password_hash, verify_password, create_access_token,
     generate_email_verification_token, send_verification_email,
     send_password_reset_email, get_current_user, get_current_active_user
 )
-from ..database import database
+from database import database
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
