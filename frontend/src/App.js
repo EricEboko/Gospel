@@ -1,17 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SpotifyClone } from './components';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthComponent } from './components/auth/AuthComponent';
+import { MainLayout } from './components/main/MainLayout';
+import { getTranslations } from './utils/translations';
+
+const AppContent = () => {
+  const { isAuthenticated, loading } = useAuth();
+  const [language, setLanguage] = useState(
+    localStorage.getItem('gospelspot_language') || 'en'
+  );
+
+  useEffect(() => {
+    localStorage.setItem('gospelspot_language', language);
+  }, [language]);
+
+  const t = getTranslations(language);
+
+  const handleLanguageChange = (newLanguage) => {
+    setLanguage(newLanguage);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <AuthComponent 
+        t={t} 
+        onLanguageChange={handleLanguageChange}
+      />
+    );
+  }
+
+  return (
+    <MainLayout 
+      t={t} 
+      language={language}
+      onLanguageChange={handleLanguageChange}
+    />
+  );
+};
 
 function App() {
   return (
-    <div className="App">
+    <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<SpotifyClone />} />
-        </Routes>
+        <div className="App">
+          <Routes>
+            <Route path="/*" element={<AppContent />} />
+          </Routes>
+        </div>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   );
 }
 
