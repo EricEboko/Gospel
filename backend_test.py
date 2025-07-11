@@ -169,23 +169,32 @@ class GospelSpotAPITester:
     
     async def test_email_verification(self):
         """Test email verification process"""
-        # For testing, we'll simulate email verification tokens
-        # In a real scenario, these would come from email
-        test_tokens = ['test_token_123', 'test_token_456', 'test_token_789']
+        # Test with invalid token
+        verification_data = {'token': 'invalid_token_123'}
+        success, data, status = await self.make_request('POST', '/auth/verify-email', verification_data)
         
-        for i, user_type in enumerate(['regular_user', 'label_manager', 'artist_user']):
-            if user_type in self.test_data:
-                # Simulate email verification
-                verification_data = {'token': test_tokens[i]}
-                success, data, status = await self.make_request('POST', '/auth/verify-email', verification_data)
-                
-                # This will likely fail since we don't have real tokens, but we test the endpoint
-                if status == 400 and 'Invalid verification token' in str(data):
-                    self.log_result(f"Email Verification Endpoint ({user_type})", True, 
-                                  "Endpoint correctly validates tokens")
-                else:
-                    self.log_result(f"Email Verification Endpoint ({user_type})", False, 
-                                  f"Unexpected response: {status}, {data}")
+        if not success and status == 400 and 'Invalid verification token' in str(data):
+            self.log_result("Email Verification Endpoint", True, 
+                          "Endpoint correctly validates tokens")
+        else:
+            self.log_result("Email Verification Endpoint", False, 
+                          f"Unexpected response: {status}, {data}")
+    
+    async def test_protected_endpoint_access(self):
+        """Test access to protected endpoints with valid token"""
+        if 'super_admin' not in self.tokens:
+            self.log_result("Protected Endpoint Access", False, "No admin token available")
+            return
+        
+        # Test accessing user profile endpoint
+        success, data, status = await self.make_request(
+            'GET', '/auth/me', token=self.tokens['super_admin']
+        )
+        
+        if success and status == 200:
+            self.log_result("Protected Endpoint Access", True, "Successfully accessed protected endpoint")
+        else:
+            self.log_result("Protected Endpoint Access", False, f"Status: {status}, Error: {data}")
     
     async def test_login_before_verification(self):
         """Test login before email verification (should fail)"""
