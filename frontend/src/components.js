@@ -1764,17 +1764,17 @@ export const SpotifyClone = () => {
       return <SubscriptionPlansView language={language} translations={translations} currentUser={currentUser} onUpgrade={handleUpgrade} />;
     }
     
-    // Other views would go here (home, search, library, etc.)
-    return (
-      <div className="p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-        </h1>
-        <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 text-center">
-          <p className="text-gray-600">This section will be implemented with the main music interface.</p>
-        </div>
-      </div>
-    );
+    // Main music interface views
+    switch (activeTab) {
+      case 'home':
+        return <HomeView language={language} translations={translations} onPlay={handlePlay} onShare={handleShare} onFollow={handleFollow} />;
+      case 'search':
+        return <SearchView language={language} translations={translations} onPlay={handlePlay} onShare={handleShare} onFollow={handleFollow} />;
+      case 'library':
+        return <LibraryView language={language} translations={translations} userPlaylists={userPlaylists} onPlay={handlePlay} onShare={handleShare} />;
+      default:
+        return <HomeView language={language} translations={translations} onPlay={handlePlay} onShare={handleShare} onFollow={handleFollow} />;
+    }
   };
   
   const isAdminView = activeTab.startsWith('admin-');
