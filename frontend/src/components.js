@@ -2120,4 +2120,684 @@ const AdminDashboard = ({ language, translations }) => {
   );
 };
 
-// Continue with more components in the main export...
+// Enhanced User Management Component with working Add User functionality
+const UserManagement = ({ language, translations, onAddUser, onEditUser, onDeleteUser, onResetPassword }) => {
+  const t = translations[language];
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterSubscription, setFilterSubscription] = useState('all');
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newUserData, setNewUserData] = useState({
+    name: '',
+    email: '',
+    subscription: 'free',
+    role: 'user',
+    country: 'USA',
+    language: 'en'
+  });
+  
+  const filteredUsers = mockData.users.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterSubscription === 'all' || user.subscription === filterSubscription;
+    return matchesSearch && matchesFilter;
+  });
+
+  const handleAddUser = (e) => {
+    e.preventDefault();
+    const password = Math.random().toString(36).slice(-8);
+    const newUser = {
+      id: Date.now(),
+      ...newUserData,
+      password: password,
+      joinDate: new Date().toISOString().split('T')[0],
+      lastActive: new Date().toISOString().split('T')[0],
+      status: 'active',
+      paymentMethod: null,
+      avatar: `https://images.unsplash.com/photo-${Math.random() > 0.5 ? '1507003211169-0a1dd7228f2d' : '1494790108755-2616b612b4db'}?w=150&h=150&fit=crop&crop=face`,
+      stats: {
+        songsPlayed: 0,
+        playlistsCreated: 0,
+        hoursListened: 0
+      }
+    };
+    
+    mockData.users.push(newUser);
+    onAddUser && onAddUser(newUser);
+    setShowAddUserModal(false);
+    setNewUserData({
+      name: '',
+      email: '',
+      subscription: 'free',
+      role: 'user',
+      country: 'USA',
+      language: 'en'
+    });
+    alert(`User added successfully! Password: ${password}`);
+  };
+
+  const handleResetPassword = (user) => {
+    const newPassword = Math.random().toString(36).slice(-8);
+    alert(`New password for ${user.name}: ${newPassword}`);
+    onResetPassword && onResetPassword(user.id, newPassword);
+  };
+  
+  return (
+    <div className="p-4 sm:p-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 min-h-screen">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-0">User Management</h1>
+        <button 
+          onClick={() => setShowAddUserModal(true)}
+          className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 px-4 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all flex items-center space-x-2 font-medium"
+        >
+          <PlusIcon className="w-5 h-5" />
+          <span>{t.addUser}</span>
+        </button>
+      </div>
+      
+      {/* Filters */}
+      <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder={t.searchPlaceholder}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+            />
+          </div>
+          <select
+            value={filterSubscription}
+            onChange={(e) => setFilterSubscription(e.target.value)}
+            className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+          >
+            <option value="all">All Subscriptions</option>
+            <option value="free">Free</option>
+            <option value="premium">Premium</option>
+            <option value="family">Family</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+      </div>
+      
+      {/* Users Table */}
+      <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-700">
+              <tr>
+                <th className="text-left p-4 font-medium text-gray-300">User</th>
+                <th className="text-left p-4 font-medium text-gray-300">Subscription</th>
+                <th className="text-left p-4 font-medium text-gray-300">Stats</th>
+                <th className="text-left p-4 font-medium text-gray-300">Join Date</th>
+                <th className="text-left p-4 font-medium text-gray-300">Status</th>
+                <th className="text-left p-4 font-medium text-gray-300">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-700">
+                  <td className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
+                      <div>
+                        <p className="font-medium text-white">{user.name}</p>
+                        <p className="text-sm text-gray-400">{user.email}</p>
+                        <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
+                      user.subscription === 'premium' ? 'bg-blue-900 text-blue-300' :
+                      user.subscription === 'family' ? 'bg-purple-900 text-purple-300' :
+                      user.subscription === 'student' ? 'bg-green-900 text-green-300' :
+                      'bg-gray-600 text-gray-300'
+                    }`}>
+                      {user.subscription}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="text-sm text-gray-400">
+                      <div>{user.stats.songsPlayed} songs</div>
+                      <div>{user.stats.hoursListened}h listened</div>
+                      <div>{user.stats.playlistsCreated} playlists</div>
+                    </div>
+                  </td>
+                  <td className="p-4 text-gray-400">{user.joinDate}</td>
+                  <td className="p-4">
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-900 text-green-300">
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => setSelectedUser(user)}
+                        className="p-2 text-blue-400 hover:bg-blue-900 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <EditIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleResetPassword(user)}
+                        className="p-2 text-yellow-400 hover:bg-yellow-900 rounded-lg transition-colors"
+                        title="Reset Password"
+                      >
+                        🔑
+                      </button>
+                      <button 
+                        onClick={() => {
+                          if (confirm(`Delete user ${user.name}?`)) {
+                            onDeleteUser && onDeleteUser(user.id);
+                          }
+                        }}
+                        className="p-2 text-red-400 hover:bg-red-900 rounded-lg transition-colors"
+                        title="Delete User"
+                      >
+                        <DeleteIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add User Modal */}
+      {showAddUserModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.addUser}</h2>
+            <form onSubmit={handleAddUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t.name}</label>
+                <input
+                  type="text"
+                  value={newUserData.name}
+                  onChange={(e) => setNewUserData({...newUserData, name: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t.email}</label>
+                <input
+                  type="email"
+                  value={newUserData.email}
+                  onChange={(e) => setNewUserData({...newUserData, email: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Subscription</label>
+                <select
+                  value={newUserData.subscription}
+                  onChange={(e) => setNewUserData({...newUserData, subscription: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="free">Free</option>
+                  <option value="premium">Premium</option>
+                  <option value="family">Family</option>
+                  <option value="student">Student</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select
+                  value={newUserData.role}
+                  onChange={(e) => setNewUserData({...newUserData, role: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="user">User</option>
+                  <option value="artist">Artist</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              
+              <div className="flex space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddUserModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  {t.cancel}
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
+                >
+                  {t.create}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      
+      {/* User Details Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">User Details</h2>
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <img src={selectedUser.avatar} alt={selectedUser.name} className="w-24 h-24 rounded-full mb-4" />
+                <h3 className="text-xl font-bold text-gray-800">{selectedUser.name}</h3>
+                <p className="text-gray-600 mb-4">{selectedUser.email}</p>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Role:</span>
+                    <span className="font-medium capitalize">{selectedUser.role}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Subscription:</span>
+                    <span className="font-medium capitalize">{selectedUser.subscription}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Join Date:</span>
+                    <span className="font-medium">{selectedUser.joinDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Last Active:</span>
+                    <span className="font-medium">{selectedUser.lastActive}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status:</span>
+                    <span className="font-medium">{selectedUser.status}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Country:</span>
+                    <span className="font-medium">{selectedUser.country}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Language:</span>
+                    <span className="font-medium">{selectedUser.language}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="text-lg font-bold text-gray-800 mb-4">Statistics</h4>
+                <div className="space-y-3">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">{selectedUser.stats.songsPlayed}</div>
+                    <div className="text-sm text-gray-600">Songs Played</div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">{selectedUser.stats.hoursListened}</div>
+                    <div className="text-sm text-gray-600">Hours Listened</div>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">{selectedUser.stats.playlistsCreated}</div>
+                    <div className="text-sm text-gray-600">Playlists Created</div>
+                  </div>
+                  
+                  {selectedUser.stats.artistStats && (
+                    <>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-yellow-600">{selectedUser.stats.artistStats.totalStreams.toLocaleString()}</div>
+                        <div className="text-sm text-gray-600">Total Streams</div>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-red-600">{selectedUser.stats.artistStats.monthlyListeners.toLocaleString()}</div>
+                        <div className="text-sm text-gray-600">Monthly Listeners</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-4 mt-6">
+              <button
+                onClick={() => handleResetPassword(selectedUser)}
+                className="flex-1 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors"
+              >
+                {t.resetPassword}
+              </button>
+              <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                {t.editUser}
+              </button>
+              <button className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                {t.deleteUser}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Enhanced Content Management Component with filters and search
+const ContentManagement = ({ language, translations }) => {
+  const t = translations[language];
+  const [activeContentTab, setActiveContentTab] = useState('artists');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [languageFilter, setLanguageFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
+  
+  const getFilteredContent = () => {
+    let content = [];
+    
+    switch (activeContentTab) {
+      case 'artists':
+        content = mockData.topArtists;
+        break;
+      case 'albums':
+        content = mockData.newReleases;
+        break;
+      case 'playlists':
+        content = mockData.featuredPlaylists;
+        break;
+      case 'genres':
+        content = mockData.genres;
+        break;
+    }
+    
+    return content.filter(item => {
+      const matchesSearch = (item.name || item.title)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           item.artist?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter || item.genre === categoryFilter;
+      const matchesLanguage = languageFilter === 'all' || item.language === languageFilter;
+      const matchesCountry = countryFilter === 'all' || item.country === countryFilter;
+      
+      return matchesSearch && matchesCategory && matchesLanguage && matchesCountry;
+    });
+  };
+  
+  return (
+    <div className="p-4 sm:p-8 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 min-h-screen">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-0">Content Management</h1>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900 px-4 py-2 rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition-all flex items-center space-x-2 font-medium"
+        >
+          <PlusIcon className="w-5 h-5" />
+          <span>Add {activeContentTab.slice(0, -1)}</span>
+        </button>
+      </div>
+      
+      {/* Content Type Tabs */}
+      <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={() => setActiveContentTab('artists')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeContentTab === 'artists' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Artists ({mockData.topArtists.length})
+          </button>
+          <button
+            onClick={() => setActiveContentTab('albums')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeContentTab === 'albums' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Albums ({mockData.newReleases.length})
+          </button>
+          <button
+            onClick={() => setActiveContentTab('playlists')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeContentTab === 'playlists' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Playlists ({mockData.featuredPlaylists.length})
+          </button>
+          <button
+            onClick={() => setActiveContentTab('genres')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              activeContentTab === 'genres' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Genres ({mockData.genres.length})
+          </button>
+        </div>
+        
+        {/* Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <input
+            type="text"
+            placeholder={t.searchPlaceholder}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+          />
+          
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+          >
+            <option value="all">All Categories</option>
+            {mockData.genres.map(genre => (
+              <option key={genre.id} value={genre.name}>{genre.name}</option>
+            ))}
+          </select>
+          
+          <select
+            value={languageFilter}
+            onChange={(e) => setLanguageFilter(e.target.value)}
+            className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+          >
+            <option value="all">All Languages</option>
+            {mockData.languages.map(lang => (
+              <option key={lang} value={lang}>{lang}</option>
+            ))}
+          </select>
+          
+          <select
+            value={countryFilter}
+            onChange={(e) => setCountryFilter(e.target.value)}
+            className="p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+          >
+            <option value="all">All Countries</option>
+            {mockData.countries.map(country => (
+              <option key={country} value={country}>{country}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      
+      {/* Content Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {getFilteredContent().map((item) => (
+          <div key={item.id} className="bg-gray-800 border border-gray-700 p-4 rounded-lg shadow-xl hover:shadow-2xl transition-all">
+            <img 
+              src={item.image} 
+              alt={item.name || item.title} 
+              className={`w-full aspect-square object-cover rounded-lg mb-4 ${
+                activeContentTab === 'artists' ? 'rounded-full' : ''
+              }`} 
+            />
+            <h3 className="font-bold text-white mb-2">{item.name || item.title}</h3>
+            <p className="text-sm text-gray-400 mb-2">
+              {item.genre || item.artist || item.description}
+            </p>
+            <div className="text-xs text-gray-500 mb-4 space-y-1">
+              {item.language && <div>Language: {item.language}</div>}
+              {item.country && <div>Country: {item.country}</div>}
+              {item.category && <div>Category: {item.category}</div>}
+              {item.followers && <div>{item.followers} followers</div>}
+              {item.tracks && <div>{item.tracks} tracks</div>}
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setSelectedItem(item)}
+                className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                Edit
+              </button>
+              <button className="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors text-sm">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {getFilteredContent().length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">No content found matching your filters.</p>
+        </div>
+      )}
+
+      {/* Add/Edit Modal */}
+      {(showAddModal || selectedItem) && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {selectedItem ? 'Edit' : 'Add'} {activeContentTab.slice(0, -1)}
+              </h2>
+              <button
+                onClick={() => { setShowAddModal(false); setSelectedItem(null); }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <form className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name/Title</label>
+                  <input
+                    type="text"
+                    defaultValue={selectedItem?.name || selectedItem?.title || ''}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter name/title..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                  <input
+                    type="url"
+                    defaultValue={selectedItem?.image || ''}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter image URL..."
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  defaultValue={selectedItem?.description || selectedItem?.bio || ''}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows="3"
+                  placeholder="Enter description..."
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category/Genre</label>
+                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {mockData.genres.map(genre => (
+                      <option key={genre.id} value={genre.name}>{genre.name}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {mockData.languages.map(lang => (
+                      <option key={lang} value={lang}>{lang}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {mockData.countries.map(country => (
+                      <option key={country} value={country}>{country}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              {activeContentTab === 'artists' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Listeners</label>
+                  <input
+                    type="number"
+                    defaultValue={selectedItem?.monthlyListeners || ''}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="1000000"
+                  />
+                </div>
+              )}
+              
+              {activeContentTab === 'albums' && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                    <input
+                      type="number"
+                      defaultValue={selectedItem?.year || new Date().getFullYear()}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tracks</label>
+                    <input
+                      type="number"
+                      defaultValue={selectedItem?.tracks || 10}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex space-x-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => { setShowAddModal(false); setSelectedItem(null); }}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
+                >
+                  {selectedItem ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Continue with the main export component...
