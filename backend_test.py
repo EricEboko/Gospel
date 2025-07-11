@@ -604,6 +604,7 @@ class GospelSpotAPITester:
             await self.test_email_verification()
             await self.test_login_before_verification()
             await self.test_create_super_admin()
+            await self.test_protected_endpoint_access()
             
             # User Management Tests
             print("\n👥 User Management Tests")
