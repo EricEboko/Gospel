@@ -1431,7 +1431,441 @@ const UserManagement = ({ language, translations }) => {
   );
 };
 
-// Content Management Component  
+// Home View Component
+const HomeView = ({ language, translations, onPlay, onShare, onFollow }) => {
+  const t = translations[language];
+  const currentHour = new Date().getHours();
+  let greeting = t.goodEvening;
+  
+  if (currentHour < 12) {
+    greeting = t.goodMorning;
+  } else if (currentHour < 18) {
+    greeting = t.goodAfternoon;
+  }
+
+  return (
+    <div className="p-8">
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">{greeting}</h1>
+      
+      {/* Recently Played */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.recentlyPlayed}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {mockData.recentlyPlayed.map((item) => (
+            <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:shadow-lg transition-all cursor-pointer">
+              <img src={item.image} alt={item.title} className="w-16 h-16 rounded-md" />
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-800">{item.title}</h3>
+                <p className="text-gray-600 text-sm">{item.artist}</p>
+                <p className="text-gray-500 text-xs">{item.playedAt}</p>
+              </div>
+              <button 
+                onClick={() => onPlay(item)}
+                className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all"
+              >
+                <PlayIcon className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Made for you */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">{t.madeForYou}</h2>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">{t.showAll}</button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {mockData.featuredPlaylists.map((playlist) => (
+            <PlaylistCard key={playlist.id} playlist={playlist} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
+          ))}
+        </div>
+      </div>
+      
+      {/* New Releases */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">{t.newReleases}</h2>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">{t.showAll}</button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {mockData.newReleases.map((album) => (
+            <AlbumCard key={album.id} album={album} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
+          ))}
+        </div>
+      </div>
+      
+      {/* Top Artists */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-800">{t.topArtists}</h2>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">{t.showAll}</button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {mockData.topArtists.map((artist) => (
+            <ArtistCard key={artist.id} artist={artist} onPlay={onPlay} onFollow={onFollow} language={language} translations={translations} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Search View Component
+const SearchView = ({ language, translations, onPlay, onShare, onFollow }) => {
+  const t = translations[language];
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState('');
+  
+  const handleSearch = (query) => {
+    if (query.trim() === '') {
+      setSearchResults([]);
+      return;
+    }
+    
+    let results = [
+      ...mockData.newReleases.filter(album => 
+        album.title.toLowerCase().includes(query.toLowerCase()) ||
+        album.artist.toLowerCase().includes(query.toLowerCase())
+      ),
+      ...mockData.topArtists.filter(artist => 
+        artist.name.toLowerCase().includes(query.toLowerCase())
+      ),
+      ...mockData.featuredPlaylists.filter(playlist => 
+        playlist.name.toLowerCase().includes(query.toLowerCase())
+      )
+    ];
+    
+    setSearchResults(results);
+  };
+  
+  useEffect(() => {
+    handleSearch(searchQuery);
+  }, [searchQuery]);
+
+  return (
+    <div className="p-8">
+      <div className="mb-8">
+        <div className="relative">
+          <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder={`${t.search}...`}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+      
+      {searchQuery === '' ? (
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.browseAll}</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {mockData.genres.map((genre) => (
+              <div key={genre.id} className={`${genre.color} rounded-lg p-4 h-32 relative overflow-hidden cursor-pointer hover:scale-105 transition-transform`}>
+                <h3 className="text-white text-lg font-bold mb-2">{genre.name}</h3>
+                <img src={genre.image} alt={genre.name} className="absolute -bottom-2 -right-2 w-20 h-20 object-cover rounded-lg transform rotate-12" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.searchResults} "{searchQuery}"</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {searchResults.map((item, index) => (
+              <div key={index} className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer">
+                <img src={item.image} alt={item.title || item.name} className="w-full aspect-square object-cover rounded-md mb-4" />
+                <h3 className="font-bold text-gray-800 mb-1">{item.title || item.name}</h3>
+                <p className="text-gray-600 text-sm">{item.artist || item.genre || 'Playlist'}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-gray-500">{item.type || 'Artist'}</span>
+                  <button 
+                    onClick={() => onPlay(item)}
+                    className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all"
+                  >
+                    <PlayIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Library View Component
+const LibraryView = ({ language, translations, userPlaylists, onPlay, onShare }) => {
+  const t = translations[language];
+  
+  return (
+    <div className="p-8">
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">{t.library}</h1>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer">
+          <div className="w-full aspect-square bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-md mb-4 flex items-center justify-center">
+            <HeartIcon className="w-12 h-12 text-white" />
+          </div>
+          <h3 className="font-bold text-gray-800 mb-1">{t.likedSongs}</h3>
+          <p className="text-gray-600 text-sm">42 songs</p>
+        </div>
+        
+        {mockData.featuredPlaylists.map((playlist) => (
+          <PlaylistCard key={playlist.id} playlist={playlist} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
+        ))}
+        
+        {userPlaylists.map((playlist) => (
+          <PlaylistCard key={playlist.id} playlist={playlist} onPlay={onPlay} onShare={onShare} language={language} translations={translations} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Playlist Card Component
+const PlaylistCard = ({ playlist, onPlay, onShare, language, translations }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const t = translations[language];
+  
+  return (
+    <div 
+      className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => onPlay(playlist)}
+    >
+      <div className="relative">
+        <img 
+          src={playlist.image} 
+          alt={playlist.name}
+          className="w-full aspect-square object-cover rounded-md mb-4"
+        />
+        {isHovered && (
+          <div className="absolute bottom-2 right-2 flex space-x-2">
+            <button 
+              onClick={(e) => { e.stopPropagation(); onShare(playlist); }}
+              className="bg-white text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors shadow-md"
+            >
+              <ShareIcon className="w-4 h-4" />
+            </button>
+            <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg">
+              <PlayIcon className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+      </div>
+      <h3 className="font-bold text-gray-800 mb-2">{playlist.name}</h3>
+      <p className="text-gray-600 text-sm mb-2">{playlist.description}</p>
+      <div className="flex items-center justify-between text-xs text-gray-500">
+        <span>{playlist.followers?.toLocaleString()} {t.followers}</span>
+        <span>{playlist.songs?.length} {t.tracks}</span>
+      </div>
+    </div>
+  );
+};
+
+// Album Card Component
+const AlbumCard = ({ album, onPlay, onShare, language, translations }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const t = translations[language];
+  
+  return (
+    <div 
+      className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => onPlay(album)}
+    >
+      <div className="relative">
+        <img 
+          src={album.image} 
+          alt={album.title}
+          className="w-full aspect-square object-cover rounded-md mb-4"
+        />
+        {isHovered && (
+          <div className="absolute bottom-2 right-2 flex space-x-2">
+            <button 
+              onClick={(e) => { e.stopPropagation(); onShare(album); }}
+              className="bg-white text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors shadow-md"
+            >
+              <ShareIcon className="w-4 h-4" />
+            </button>
+            <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg">
+              <PlayIcon className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+      </div>
+      <h3 className="font-bold text-gray-800 mb-1">{album.title}</h3>
+      <p className="text-gray-600 text-sm mb-2">{album.year} • {album.artist}</p>
+      <div className="flex items-center justify-between text-xs text-gray-500">
+        <span>{album.genre}</span>
+        <span>{album.tracks} {t.tracks}</span>
+      </div>
+    </div>
+  );
+};
+
+// Artist Card Component
+const ArtistCard = ({ artist, onPlay, onFollow, language, translations }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const t = translations[language];
+  
+  return (
+    <div 
+      className="bg-white border border-gray-200 p-4 rounded-lg hover:shadow-lg transition-all cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => onPlay(artist)}
+    >
+      <div className="relative">
+        <img 
+          src={artist.image} 
+          alt={artist.name}
+          className="w-full aspect-square object-cover rounded-full mb-4"
+        />
+        {isHovered && (
+          <div className="absolute bottom-2 right-2 flex space-x-2">
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsFollowing(!isFollowing); onFollow(artist); }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                isFollowing 
+                  ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
+                  : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-100'
+              }`}
+            >
+              {isFollowing ? t.following : t.follow}
+            </button>
+            <button className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-full hover:from-blue-700 hover:to-blue-900 transition-all shadow-lg">
+              <PlayIcon className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="flex items-center justify-center mb-2">
+        <h3 className="font-bold text-gray-800 mr-2">{artist.name}</h3>
+        {artist.verified && (
+          <VerifiedIcon className="w-5 h-5 text-blue-600" />
+        )}
+      </div>
+      <p className="text-gray-600 text-sm text-center mb-2">{artist.genre}</p>
+      <div className="text-xs text-gray-500 text-center space-y-1">
+        <div>{artist.followers} {t.followers}</div>
+        <div>{artist.monthlyListeners} {t.monthlyListeners}</div>
+      </div>
+    </div>
+  );
+};
+
+const ShareIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+  </svg>
+);
+
+const VerifiedIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+  </svg>
+);
+
+// Create Playlist Modal Component  
+const CreatePlaylistModal = ({ isOpen, onClose, onCreatePlaylist, language, translations }) => {
+  const [playlistName, setPlaylistName] = useState('');
+  const [description, setDescription] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
+  const t = translations[language];
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (playlistName.trim()) {
+      onCreatePlaylist({
+        name: playlistName,
+        description,
+        isPublic,
+        songs: [],
+        createdAt: new Date().toISOString()
+      });
+      setPlaylistName('');
+      setDescription('');
+      setIsPublic(true);
+      onClose();
+    }
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">{t.createPlaylist}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="playlist-name" className="block text-sm font-medium text-gray-700 mb-1">
+              {t.playlistName}
+            </label>
+            <input
+              id="playlist-name"
+              type="text"
+              value={playlistName}
+              onChange={(e) => setPlaylistName(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={t.playlistName}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="playlist-description" className="block text-sm font-medium text-gray-700 mb-1">
+              {t.description}
+            </label>
+            <textarea
+              id="playlist-description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={t.description}
+              rows="3"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              id="playlist-public"
+              type="checkbox"
+              checked={isPublic}
+              onChange={(e) => setIsPublic(e.target.checked)}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label htmlFor="playlist-public" className="text-sm text-gray-700">
+              {t.makePublic}
+            </label>
+          </div>
+          <div className="flex space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              {t.cancel}
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all"
+            >
+              {t.create}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 const ContentManagement = ({ language, translations }) => {
   const t = translations[language];
   const [activeContentTab, setActiveContentTab] = useState('artists');
