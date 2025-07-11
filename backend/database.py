@@ -7,14 +7,26 @@ from models import User, Artist, Song, UserCreate, UserUpdate, ArtistCreate, Art
 
 class Database:
     def __init__(self):
-        self.client = AsyncIOMotorClient(os.environ['MONGO_URL'])
-        self.db = self.client[os.environ['DB_NAME']]
+        self.client = None
+        self.db = None
+        
+    async def connect(self):
+        if not self.client:
+            self.client = AsyncIOMotorClient(os.environ['MONGO_URL'])
+            self.db = self.client[os.environ['DB_NAME']]
         
     async def close(self):
-        self.client.close()
+        if self.client:
+            self.client.close()
+            
+    async def ensure_connected(self):
+        if not self.client:
+            await self.connect()
         
     # User Operations
     async def create_user(self, user_data: UserCreate, password_hash: str, email_verification_token: str) -> User:
+        await self.ensure_connected()
+        
         user = User(
             email=user_data.email,
             first_name=user_data.first_name,
@@ -31,18 +43,22 @@ class Database:
         return user
     
     async def get_user_by_id(self, user_id: str) -> Optional[User]:
+        await self.ensure_connected()
         user_doc = await self.db.users.find_one({"id": user_id})
         return User(**user_doc) if user_doc else None
     
     async def get_user_by_email(self, email: str) -> Optional[User]:
+        await self.ensure_connected()
         user_doc = await self.db.users.find_one({"email": email})
         return User(**user_doc) if user_doc else None
     
     async def get_user_by_verification_token(self, token: str) -> Optional[User]:
+        await self.ensure_connected()
         user_doc = await self.db.users.find_one({"email_verification_token": token})
         return User(**user_doc) if user_doc else None
     
     async def update_user(self, user_id: str, update_data: UserUpdate) -> Optional[User]:
+        await self.ensure_connected()
         update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
         update_dict["updated_at"] = datetime.utcnow()
         
@@ -53,6 +69,7 @@ class Database:
         return await self.get_user_by_id(user_id)
     
     async def verify_user_email(self, user_id: str) -> bool:
+        await self.ensure_connected()
         result = await self.db.users.update_one(
             {"id": user_id},
             {
@@ -67,6 +84,7 @@ class Database:
         return result.modified_count > 0
     
     async def get_users_by_role(self, role: str) -> List[User]:
+        await self.ensure_connected()
         users_cursor = self.db.users.find({"role": role})
         users = []
         async for user_doc in users_cursor:
@@ -74,6 +92,7 @@ class Database:
         return users
     
     async def get_all_users(self, skip: int = 0, limit: int = 100) -> List[User]:
+        await self.ensure_connected()
         users_cursor = self.db.users.find().skip(skip).limit(limit)
         users = []
         async for user_doc in users_cursor:
@@ -81,6 +100,7 @@ class Database:
         return users
     
     async def delete_user(self, user_id: str) -> bool:
+        await self.ensure_connected()
         result = await self.db.users.update_one(
             {"id": user_id},
             {"$set": {"status": "deleted", "updated_at": datetime.utcnow()}}
@@ -89,6 +109,7 @@ class Database:
     
     # Artist Operations
     async def create_artist(self, artist_data: ArtistCreate, created_by: str) -> Artist:
+        await self.ensure_connected()
         artist = Artist(**artist_data.dict())
         artist.managed_by = created_by
         
@@ -96,10 +117,12 @@ class Database:
         return artist
     
     async def get_artist_by_id(self, artist_id: str) -> Optional[Artist]:
+        await self.ensure_connected()
         artist_doc = await self.db.artists.find_one({"id": artist_id})
         return Artist(**artist_doc) if artist_doc else None
     
     async def get_artists_by_manager(self, manager_id: str) -> List[Artist]:
+        await self.ensure_connected()
         artists_cursor = self.db.artists.find({"managed_by": manager_id})
         artists = []
         async for artist_doc in artists_cursor:
@@ -107,6 +130,7 @@ class Database:
         return artists
     
     async def get_all_artists(self, skip: int = 0, limit: int = 100) -> List[Artist]:
+        await self.ensure_connected()
         artists_cursor = self.db.artists.find().skip(skip).limit(limit)
         artists = []
         async for artist_doc in artists_cursor:
@@ -114,6 +138,7 @@ class Database:
         return artists
     
     async def update_artist(self, artist_id: str, update_data: ArtistUpdate) -> Optional[Artist]:
+        await self.ensure_connected()
         update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
         update_dict["updated_at"] = datetime.utcnow()
         
@@ -124,11 +149,13 @@ class Database:
         return await self.get_artist_by_id(artist_id)
     
     async def delete_artist(self, artist_id: str) -> bool:
+        await self.ensure_connected()
         result = await self.db.artists.delete_one({"id": artist_id})
         return result.deleted_count > 0
     
     # Song Operations
     async def create_song(self, song_data: SongCreate, created_by: str) -> Song:
+        await self.ensure_connected()
         song = Song(**song_data.dict(), created_by=created_by)
         
         await self.db.songs.insert_one(song.dict())
@@ -142,10 +169,12 @@ class Database:
         return song
     
     async def get_song_by_id(self, song_id: str) -> Optional[Song]:
+        await self.ensure_connected()
         song_doc = await self.db.songs.find_one({"id": song_id})
         return Song(**song_doc) if song_doc else None
     
     async def get_songs_by_artist(self, artist_id: str) -> List[Song]:
+        await self.ensure_connected()
         songs_cursor = self.db.songs.find({"artist_id": artist_id})
         songs = []
         async for song_doc in songs_cursor:
@@ -153,6 +182,7 @@ class Database:
         return songs
     
     async def get_songs_by_creator(self, creator_id: str) -> List[Song]:
+        await self.ensure_connected()
         songs_cursor = self.db.songs.find({"created_by": creator_id})
         songs = []
         async for song_doc in songs_cursor:
@@ -160,6 +190,7 @@ class Database:
         return songs
     
     async def get_all_songs(self, skip: int = 0, limit: int = 100) -> List[Song]:
+        await self.ensure_connected()
         songs_cursor = self.db.songs.find().skip(skip).limit(limit)
         songs = []
         async for song_doc in songs_cursor:
@@ -167,6 +198,7 @@ class Database:
         return songs
     
     async def update_song(self, song_id: str, update_data: SongUpdate) -> Optional[Song]:
+        await self.ensure_connected()
         update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
         update_dict["updated_at"] = datetime.utcnow()
         
@@ -177,6 +209,7 @@ class Database:
         return await self.get_song_by_id(song_id)
     
     async def delete_song(self, song_id: str) -> bool:
+        await self.ensure_connected()
         # Get song first to update artist's count
         song = await self.get_song_by_id(song_id)
         if song:
@@ -190,6 +223,7 @@ class Database:
     
     # Statistics Operations
     async def increment_song_play_count(self, song_id: str) -> bool:
+        await self.ensure_connected()
         result = await self.db.songs.update_one(
             {"id": song_id},
             {
@@ -213,6 +247,7 @@ class Database:
         return result.modified_count > 0
     
     async def get_artist_statistics(self, artist_id: str) -> Dict[str, Any]:
+        await self.ensure_connected()
         artist = await self.get_artist_by_id(artist_id)
         if not artist:
             return {}
@@ -240,6 +275,7 @@ class Database:
         }
     
     async def get_label_statistics(self, label_id: str) -> Dict[str, Any]:
+        await self.ensure_connected()
         artists = await self.get_artists_by_manager(label_id)
         
         total_streams = 0
