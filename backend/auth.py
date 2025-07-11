@@ -41,6 +41,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from database import database
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -54,16 +56,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except JWTError:
         raise credentials_exception
     
-    # Here you would typically fetch the user from the database
-    # For now, we'll create a mock user
-    user = User(
-        id=user_id,
-        email="user@example.com",
-        first_name="John",
-        last_name="Doe",
-        role=UserRole.USER,
-        password_hash="hashed_password"
-    )
+    # Fetch the user from the database
+    user = await database.get_user_by_id(user_id)
+    if user is None:
+        raise credentials_exception
+    
     return user
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
