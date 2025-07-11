@@ -1719,6 +1719,24 @@ export const SpotifyClone = () => {
     setIsPlaying(true);
   };
   
+  const handleShare = (item) => {
+    const shareText = `Check out ${item.title || item.name} on GospelSpot!`;
+    if (navigator.share) {
+      navigator.share({
+        title: item.title || item.name,
+        text: shareText,
+        url: window.location.href
+      });
+    } else {
+      navigator.clipboard.writeText(shareText);
+      alert('Link copied to clipboard!');
+    }
+  };
+  
+  const handleFollow = (artist) => {
+    console.log('Following artist:', artist.name);
+  };
+  
   const handleUpgrade = (plan) => {
     setCurrentUser({ ...currentUser, subscription: plan.id });
     alert(`Upgraded to ${plan.name} plan!`);
