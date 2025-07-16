@@ -171,7 +171,14 @@ class Database:
     async def get_song_by_id(self, song_id: str) -> Optional[Song]:
         await self.ensure_connected()
         song_doc = await self.db.songs.find_one({"id": song_id})
-        return Song(**song_doc) if song_doc else None
+        if song_doc:
+            song = Song(**song_doc)
+            # Get artist name
+            artist = await self.get_artist_by_id(song.artist_id)
+            if artist:
+                song.artist_name = artist.name
+            return song
+        return None
     
     async def get_songs_by_artist(self, artist_id: str) -> List[Song]:
         await self.ensure_connected()
