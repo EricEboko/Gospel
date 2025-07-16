@@ -309,5 +309,253 @@ class Database:
             "artists": artist_stats
         }
 
+    # Advertisement Operations
+    async def create_ad(self, ad_data: 'AdCreate', created_by: str) -> 'AdContent':
+        await self.ensure_connected()
+        
+        ad = AdContent(
+            title=ad_data.title,
+            description=ad_data.description,
+            file_type=ad_data.file_type,
+            file_base64=ad_data.file_base64,
+            duration=ad_data.duration,
+            skip_after=ad_data.skip_after,
+            created_by=created_by
+        )
+        
+        await self.db.advertisements.insert_one(ad.dict())
+        return ad
+    
+    async def get_ad_by_id(self, ad_id: str) -> Optional['AdContent']:
+        await self.ensure_connected()
+        ad_doc = await self.db.advertisements.find_one({"id": ad_id})
+        return AdContent(**ad_doc) if ad_doc else None
+    
+    async def get_all_ads(self, skip: int = 0, limit: int = 100) -> List['AdContent']:
+        await self.ensure_connected()
+        ads_cursor = self.db.advertisements.find({"is_active": True}).skip(skip).limit(limit)
+        ads = []
+        async for ad_doc in ads_cursor:
+            ads.append(AdContent(**ad_doc))
+        return ads
+    
+    async def update_ad(self, ad_id: str, update_data: 'AdUpdate') -> Optional['AdContent']:
+        await self.ensure_connected()
+        update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
+        update_dict["updated_at"] = datetime.utcnow()
+        
+        await self.db.advertisements.update_one(
+            {"id": ad_id},
+            {"$set": update_dict}
+        )
+        return await self.get_ad_by_id(ad_id)
+    
+    async def delete_ad(self, ad_id: str) -> bool:
+        await self.ensure_connected()
+        result = await self.db.advertisements.update_one(
+            {"id": ad_id},
+            {"$set": {"is_active": False}}
+        )
+        return result.modified_count > 0
+    
+    # Ad Settings Operations
+    async def get_ad_settings(self) -> Optional['AdSettings']:
+        await self.ensure_connected()
+        settings_doc = await self.db.ad_settings.find_one()
+        return AdSettings(**settings_doc) if settings_doc else None
+    
+    async def update_ad_settings(self, settings_data: 'AdSettingsUpdate', updated_by: str) -> 'AdSettings':
+        await self.ensure_connected()
+        update_dict = {k: v for k, v in settings_data.dict().items() if v is not None}
+        update_dict["updated_by"] = updated_by
+        update_dict["updated_at"] = datetime.utcnow()
+        
+        result = await self.db.ad_settings.update_one(
+            {},
+            {"$set": update_dict},
+            upsert=True
+        )
+        
+        return await self.get_ad_settings()
+    
+    # Enhanced Artist Statistics
+    async def get_artist_dashboard(self, artist_id: str) -> Dict[str, Any]:
+        await self.ensure_connected()
+        artist = await self.get_artist_by_id(artist_id)
+        if not artist:
+            return {}
+        
+        songs = await self.get_songs_by_artist(artist_id)
+        total_streams = sum(song.play_count for song in songs)
+        
+        # Calculate revenue (simplified - $0.004 per stream)
+        total_revenue = total_streams * 0.004
+        
+        # Get top songs
+        top_songs = sorted(songs, key=lambda x: x.play_count, reverse=True)[:5]
+        
+        # Mock recent activity
+        recent_activity = [
+            {"type": "new_stream", "song": song.title, "timestamp": datetime.utcnow()}
+            for song in top_songs[:3]
+        ]
+        
+        return {
+            "artist_id": artist_id,
+            "total_songs": len(songs),
+            "total_streams": total_streams,
+            "monthly_listeners": int(total_streams * 0.3),  # Mock data
+            "total_revenue": total_revenue,
+            "recent_activity": recent_activity,
+            "top_songs": [{"title": song.title, "streams": song.play_count} for song in top_songs],
+            "fan_demographics": {"countries": {"USA": 40, "Brazil": 25, "UK": 15, "Others": 20}}
+        }
+    
+    async def get_artist_earnings(self, artist_id: str, start_date: str = None, end_date: str = None) -> Dict[str, Any]:
+        await self.ensure_connected()
+        songs = await self.get_songs_by_artist(artist_id)
+        total_streams = sum(song.play_count for song in songs)
+        total_earnings = total_streams * 0.004
+        
+        # Mock daily earnings for the last 30 days
+        earnings = []
+        for i in range(30):
+            date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
+            earnings.append({
+                "date": date,
+                "amount": round(total_earnings / 30, 2)  # Distribute evenly
+            })
+        
+        return {
+            "artist_id": artist_id,
+            "period": "daily",
+            "earnings": earnings,
+            "total_earnings": total_earnings
+        }
+    
+    # Enhanced Label Statistics
+    async def get_label_dashboard(self, label_id: str) -> Dict[str, Any]:
+        await self.ensure_connected()
+        artists = await self.get_artists_by_manager(label_id)
+        
+        total_streams = 0
+        total_songs = 0
+        revenue_by_artist = []
+        
+        for artist in artists:
+            songs = await self.get_songs_by_artist(artist.id)
+            artist_streams = sum(song.play_count for song in songs)
+            artist_revenue = artist_streams * 0.004
+            
+            total_streams += artist_streams
+            total_songs += len(songs)
+            
+            revenue_by_artist.append({
+                "artist_name": artist.name,
+                "streams": artist_streams,
+                "revenue": artist_revenue
+            })
+        
+        # Sort by revenue
+        revenue_by_artist.sort(key=lambda x: x["revenue"], reverse=True)
+        
+        return {
+            "label_id": label_id,
+            "total_artists": len(artists),
+            "total_songs": total_songs,
+            "total_streams": total_streams,
+            "total_revenue": total_streams * 0.004,
+            "top_artists": revenue_by_artist[:5],
+            "recent_activity": [],  # Mock data
+            "revenue_by_artist": revenue_by_artist
+        }
+    
+    async def get_label_earnings(self, label_id: str, start_date: str = None, end_date: str = None) -> Dict[str, Any]:
+        await self.ensure_connected()
+        artists = await self.get_artists_by_manager(label_id)
+        
+        total_earnings = 0
+        earnings_by_artist = []
+        
+        for artist in artists:
+            songs = await self.get_songs_by_artist(artist.id)
+            artist_streams = sum(song.play_count for song in songs)
+            artist_earnings = artist_streams * 0.004
+            
+            total_earnings += artist_earnings
+            earnings_by_artist.append({
+                "artist_name": artist.name,
+                "earnings": artist_earnings
+            })
+        
+        # Mock daily earnings for the last 30 days
+        earnings_by_date = []
+        for i in range(30):
+            date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
+            earnings_by_date.append({
+                "date": date,
+                "amount": round(total_earnings / 30, 2)  # Distribute evenly
+            })
+        
+        return {
+            "label_id": label_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "earnings_by_date": earnings_by_date,
+            "earnings_by_artist": earnings_by_artist,
+            "total_earnings": total_earnings
+        }
+    
+    # Ad Impression Tracking
+    async def record_ad_impression(self, user_id: str, ad_id: str, watched_duration: int, was_skipped: bool = False) -> None:
+        await self.ensure_connected()
+        
+        # Calculate revenue based on watch time
+        revenue = 0.01 if watched_duration >= 5 else 0.005  # Higher revenue for longer watches
+        
+        impression = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "ad_id": ad_id,
+            "revenue": revenue,
+            "watched_duration": watched_duration,
+            "was_skipped": was_skipped,
+            "timestamp": datetime.utcnow()
+        }
+        
+        await self.db.ad_impressions.insert_one(impression)
+    
+    async def get_ad_statistics(self) -> Dict[str, Any]:
+        await self.ensure_connected()
+        
+        # Get all impressions
+        impressions_cursor = self.db.ad_impressions.find()
+        impressions = []
+        async for impression in impressions_cursor:
+            impressions.append(impression)
+        
+        total_impressions = len(impressions)
+        total_revenue = sum(imp.get("revenue", 0) for imp in impressions)
+        
+        # Revenue by date (last 30 days)
+        revenue_by_date = {}
+        for i in range(30):
+            date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
+            revenue_by_date[date] = 0
+        
+        for impression in impressions:
+            date = impression["timestamp"].strftime("%Y-%m-%d")
+            if date in revenue_by_date:
+                revenue_by_date[date] += impression.get("revenue", 0)
+        
+        return {
+            "total_impressions": total_impressions,
+            "total_revenue": total_revenue,
+            "revenue_by_date": revenue_by_date,
+            "top_performing_ads": [],  # TODO: Implement
+            "average_watch_time": sum(imp.get("watched_duration", 0) for imp in impressions) / max(total_impressions, 1),
+            "skip_rate": sum(1 for imp in impressions if imp.get("was_skipped", False)) / max(total_impressions, 1) * 100
+        }
+
 # Global database instance
 database = Database()
