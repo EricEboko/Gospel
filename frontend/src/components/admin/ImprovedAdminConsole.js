@@ -664,14 +664,14 @@ export const ImprovedAdminConsole = ({ t, language, onLanguageChange, onReturnHo
             </div>
           ) : (
             <>
-              {activeTab === 'dashboard' && renderDashboard()}
-              {activeTab === 'users' && renderUsers()}
-              {activeTab === 'settings' && (
-                <div className="text-white">
-                  <h2 className="text-2xl font-bold mb-4">Settings</h2>
-                  <p>Settings panel - Coming soon...</p>
-                </div>
-              )}
+              {!showProfile && activeTab === 'dashboard' && renderDashboard()}
+              {!showProfile && activeTab === 'users' && renderUsers()}
+              {!showProfile && activeTab === 'artists' && renderArtists()}
+              {!showProfile && activeTab === 'songs' && renderSongs()}
+              {!showProfile && activeTab === 'revenue' && renderRevenue()}
+              {!showProfile && activeTab === 'monetization' && renderMonetization()}
+              {!showProfile && activeTab === 'advertisement' && renderAdvertisement()}
+              {!showProfile && activeTab === 'settings' && renderSettings()}
               {showProfile && renderProfile()}
             </>
           )}
