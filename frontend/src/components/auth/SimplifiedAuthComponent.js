@@ -232,7 +232,7 @@ export const SimplifiedAuthComponent = ({ t, onLanguageChange }) => {
         )}
 
         {/* Register Step 1: Email & Phone */}
-        {!isLogin && step === 2 && (
+        {!isLogin && (
           <form onSubmit={handleRegisterStep1} className="space-y-4">
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-2">
