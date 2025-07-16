@@ -32,7 +32,7 @@ const AppContent = () => {
 
   if (!isAuthenticated) {
     return (
-      <SimplifiedAuthComponent 
+      <FixedSimplifiedAuth 
         t={t} 
         onLanguageChange={handleLanguageChange}
       />
