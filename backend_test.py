@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://3d5d19bd-b086-428f-a81c-66e9fa96950f.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://780707f1-4965-422e-8876-8aee3c7b1724.preview.emergentagent.com')
 API_BASE_URL = f"{BACKEND_URL}/api"
 
 class GospelSpotAPITester:
