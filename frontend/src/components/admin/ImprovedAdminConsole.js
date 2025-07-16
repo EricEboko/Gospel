@@ -360,6 +360,48 @@ export const ImprovedAdminConsole = ({ t, language, onLanguageChange, onReturnHo
     </div>
   );
 
+  const renderArtists = () => (
+    <div className="text-white">
+      <h2 className="text-2xl font-bold mb-4">Artists Management</h2>
+      <p>Artists management panel - Coming soon...</p>
+    </div>
+  );
+
+  const renderSongs = () => (
+    <div className="text-white">
+      <h2 className="text-2xl font-bold mb-4">Songs Management</h2>
+      <p>Songs management panel - Coming soon...</p>
+    </div>
+  );
+
+  const renderRevenue = () => (
+    <div className="text-white">
+      <h2 className="text-2xl font-bold mb-4">Revenue Analytics</h2>
+      <p>Revenue analytics panel - Coming soon...</p>
+    </div>
+  );
+
+  const renderMonetization = () => (
+    <div className="text-white">
+      <h2 className="text-2xl font-bold mb-4">Monetization</h2>
+      <p>Monetization panel - Coming soon...</p>
+    </div>
+  );
+
+  const renderAdvertisement = () => (
+    <div className="text-white">
+      <h2 className="text-2xl font-bold mb-4">Advertisement Management</h2>
+      <p>Advertisement management panel - Coming soon...</p>
+    </div>
+  );
+
+  const renderSettings = () => (
+    <div className="text-white">
+      <h2 className="text-2xl font-bold mb-4">Settings</h2>
+      <p>Settings panel - Coming soon...</p>
+    </div>
+  );
+
   const renderProfile = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white">My Profile</h2>
