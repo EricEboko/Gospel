@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { songAPI, artistAPI } from '../../utils/api';
 import { FixedAudioPlayer } from '../audio/FixedAudioPlayer';
-import { FixedAdminConsole } from '../admin/FixedAdminConsole';
+import { ImprovedAdminConsole } from '../admin/ImprovedAdminConsole';
 
 // Icons
 const HomeIcon = ({ className = "w-5 h-5" }) => (
