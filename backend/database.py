@@ -194,7 +194,12 @@ class Database:
         songs_cursor = self.db.songs.find().skip(skip).limit(limit)
         songs = []
         async for song_doc in songs_cursor:
-            songs.append(Song(**song_doc))
+            song = Song(**song_doc)
+            # Get artist name
+            artist = await self.get_artist_by_id(song.artist_id)
+            if artist:
+                song.artist_name = artist.name
+            songs.append(song)
         return songs
     
     async def update_song(self, song_id: str, update_data: SongUpdate) -> Optional[Song]:
