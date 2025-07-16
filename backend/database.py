@@ -1,9 +1,10 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Optional, List, Dict, Any
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
+import uuid
 
-from models import User, Artist, Song, UserCreate, UserUpdate, ArtistCreate, ArtistUpdate, SongCreate, SongUpdate
+from models import User, Artist, Song, UserCreate, UserUpdate, ArtistCreate, ArtistUpdate, SongCreate, SongUpdate, AdCreate, AdContent, AdUpdate, AdSettings, AdSettingsUpdate
 
 class Database:
     def __init__(self):
