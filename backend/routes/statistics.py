@@ -317,37 +317,7 @@ async def get_dashboard_statistics(
             "message": "Welcome to GospelSpot!"
         }
 
-@router.get("/dashboard")
-async def get_dashboard_statistics(
-    current_user = Depends(get_current_active_user)
-):
-    """Get dashboard statistics based on user role"""
-    if current_user.role == UserRole.SUPER_ADMIN:
-        return await get_platform_statistics(current_user)
-    elif current_user.role == UserRole.LABEL_MANAGER:
-        return await get_my_label_statistics(current_user)
-    elif current_user.role == UserRole.ARTIST:
-        # Find artist profile for this user
-        all_artists = await database.get_all_artists(limit=1000)
-        user_artist = None
-        for artist in all_artists:
-            if artist.user_id == current_user.id:
-                user_artist = artist
-                break
-        
-        if user_artist:
-            return await get_artist_statistics(user_artist.id, current_user)
-        else:
-            return {"message": "No artist profile found"}
-    else:
-        # Regular user - return basic stats
-        return {
-            "user_type": "regular",
-            "subscription_plan": current_user.subscription_plan,
-            "account_created": current_user.created_at,
-            "last_login": current_user.last_login,
-            "stats": current_user.stats
-        }
+
 
 @router.get("/revenue/ads")
 async def get_ads_revenue(
