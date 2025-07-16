@@ -159,24 +159,34 @@ async def get_label_statistics(
     
     # Get performance by artist
     artist_performance = []
-    for artist_stat in stats.get("artists", []):
+    artists = await database.get_artists_by_manager(label_id)
+    
+    for artist in artists:
+        artist_songs = await database.get_songs_by_artist(artist.id)
+        artist_streams = sum(song.play_count for song in artist_songs)
+        artist_revenue = artist_streams * 0.004
+        
         artist_performance.append({
-            "artist_id": artist_stat["artist_id"],
-            "artist_name": artist_stat["artist_name"],
-            "total_streams": artist_stat["total_streams"],
-            "total_songs": artist_stat["total_songs"],
-            "estimated_revenue": artist_stat["total_streams"] * 0.004
+            "artist_id": artist.id,
+            "artist_name": artist.name,
+            "total_streams": artist_streams,
+            "estimated_revenue": artist_revenue,
+            "song_count": len(artist_songs)
         })
     
-    # Sort by performance
-    artist_performance.sort(key=lambda x: x["total_streams"], reverse=True)
+    # Sort by revenue
+    artist_performance.sort(key=lambda x: x["estimated_revenue"], reverse=True)
     
     return {
         **stats,
         "estimated_revenue": estimated_revenue,
         "artist_performance": artist_performance,
-        "average_streams_per_artist": total_streams / max(stats.get("total_artists", 1), 1),
-        "growth_rate": 18.3,  # Mock growth rate
+        "top_genres": ["Gospel", "Contemporary Christian", "Praise & Worship"],  # Mock data
+        "growth_metrics": {
+            "monthly_growth": 15.2,
+            "new_listeners": 1250,
+            "retention_rate": 78.5
+        }
     }
 
 @router.get("/my/label")
