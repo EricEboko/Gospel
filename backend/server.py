@@ -11,6 +11,7 @@ from routes.users import router as users_router
 from routes.artists import router as artists_router
 from routes.songs import router as songs_router
 from routes.statistics import router as statistics_router
+from routes.advertisements import router as advertisements_router
 from database import database
 
 ROOT_DIR = Path(__file__).parent
