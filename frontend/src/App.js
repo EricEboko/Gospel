@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { SimplifiedAuthComponent } from './components/auth/SimplifiedAuthComponent';
+import { FixedSimplifiedAuth } from './components/auth/FixedSimplifiedAuth';
 import { FixedMainLayout } from './components/main/FixedMainLayout';
 import { getTranslations } from './utils/translations';
 
