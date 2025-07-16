@@ -205,16 +205,98 @@ class PlatformStats(BaseModel):
     top_genres: List[Dict[str, Any]]
     user_growth: Dict[str, int]
 
-# Google Ads Models
+# Advertisement Models
+class AdContent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = None
+    file_type: str  # 'video' or 'audio'
+    file_base64: str  # Base64 encoded file content
+    duration: int  # Duration in seconds
+    skip_after: int = 5  # Seconds before skip button appears
+    created_by: str  # User ID who created the ad
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = True
+    
+class AdCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    file_type: str
+    file_base64: str
+    duration: int
+    skip_after: int = 5
+    
+class AdUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    duration: Optional[int] = None
+    skip_after: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class AdSettings(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    ad_frequency: int = 3  # Show ad every N songs
+    min_stream_length: int = 30  # Minimum seconds streamed before ad
+    min_ad_duration: int = 5  # Minimum seconds before skip button
+    max_ad_duration: int = 60  # Maximum ad duration
+    updated_by: str  # User ID who last updated settings
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+class AdSettingsUpdate(BaseModel):
+    ad_frequency: Optional[int] = None
+    min_stream_length: Optional[int] = None
+    min_ad_duration: Optional[int] = None
+    max_ad_duration: Optional[int] = None
+
 class AdImpression(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
-    ad_unit_id: str
+    ad_id: str
     revenue: float
+    watched_duration: int  # How long user watched the ad
+    was_skipped: bool = False
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     
 class AdStats(BaseModel):
     total_impressions: int
     total_revenue: float
     revenue_by_date: Dict[str, float]
-    top_performing_units: List[Dict[str, Any]]
+    top_performing_ads: List[Dict[str, Any]]
+    average_watch_time: float
+    skip_rate: float
+
+# Artist Dashboard Models  
+class ArtistDashboard(BaseModel):
+    artist_id: str
+    total_songs: int
+    total_streams: int
+    monthly_listeners: int
+    total_revenue: float
+    recent_activity: List[Dict[str, Any]]
+    top_songs: List[Dict[str, Any]]
+    fan_demographics: Dict[str, Any]
+    
+class ArtistEarnings(BaseModel):
+    artist_id: str
+    period: str  # 'daily', 'weekly', 'monthly', 'yearly'
+    earnings: List[Dict[str, Any]]  # [{date: str, amount: float}]
+    total_earnings: float
+    
+# Label Manager Enhanced Models
+class LabelDashboard(BaseModel):
+    label_id: str
+    total_artists: int
+    total_songs: int
+    total_streams: int
+    total_revenue: float
+    top_artists: List[Dict[str, Any]]
+    recent_activity: List[Dict[str, Any]]
+    revenue_by_artist: List[Dict[str, Any]]
+
+class LabelEarnings(BaseModel):
+    label_id: str
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    earnings_by_date: List[Dict[str, Any]]
+    earnings_by_artist: List[Dict[str, Any]]
+    total_earnings: float
