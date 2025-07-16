@@ -70,6 +70,67 @@ async def get_artist_statistics(
         "engagement_rate": 8.2,  # Mock engagement rate
     }
 
+@router.get("/artist/{artist_id}/dashboard")
+async def get_artist_dashboard(
+    artist_id: str,
+    current_user = Depends(get_current_active_user)
+):
+    """Get artist dashboard data"""
+    artist = await database.get_artist_by_id(artist_id)
+    if not artist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Artist not found"
+        )
+    
+    # Check permissions - artist can view their own dashboard
+    if (current_user.role == UserRole.ARTIST and artist.user_id != current_user.id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this dashboard"
+        )
+    
+    # Label managers can view their artists' dashboards
+    if (current_user.role == UserRole.LABEL_MANAGER and artist.managed_by != current_user.id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this dashboard"
+        )
+    
+    dashboard_data = await database.get_artist_dashboard(artist_id)
+    return dashboard_data
+
+@router.get("/artist/{artist_id}/earnings")
+async def get_artist_earnings(
+    artist_id: str,
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+    current_user = Depends(get_current_active_user)
+):
+    """Get artist earnings data"""
+    artist = await database.get_artist_by_id(artist_id)
+    if not artist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Artist not found"
+        )
+    
+    # Check permissions
+    if (current_user.role == UserRole.ARTIST and artist.user_id != current_user.id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view earnings"
+        )
+    
+    if (current_user.role == UserRole.LABEL_MANAGER and artist.managed_by != current_user.id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view earnings"
+        )
+    
+    earnings_data = await database.get_artist_earnings(artist_id, start_date, end_date)
+    return earnings_data
+
 @router.get("/label/{label_id}")
 async def get_label_statistics(
     label_id: str,
