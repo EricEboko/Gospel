@@ -19,7 +19,7 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 
 @router.post("/register", response_model=UserResponse)
 async def register(user_data: UserCreate):
-    """Register a new user"""
+    """Register a new user with automatic email verification"""
     # Check if user already exists
     existing_user = await database.get_user_by_email(user_data.email)
     if existing_user:
@@ -28,31 +28,33 @@ async def register(user_data: UserCreate):
             detail="User with this email already exists"
         )
     
-    # Hash password and generate verification token
+    # Hash password
     password_hash = get_password_hash(user_data.password)
-    verification_token = generate_email_verification_token()
     
-    # Create user
-    user = await database.create_user(user_data, password_hash, verification_token)
+    # Create user with auto-verification (simplified flow)
+    user = await database.create_user(user_data, password_hash, None)
     
-    # Send verification email
-    await send_verification_email(user.email, verification_token)
+    # Auto-verify email for simplified flow
+    await database.verify_user_email(user.id)
+    
+    # Get updated user data
+    updated_user = await database.get_user_by_id(user.id)
     
     return UserResponse(
-        id=user.id,
-        email=user.email,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        phone_number=user.phone_number,
-        country=user.country,
-        language=user.language,
-        role=user.role,
-        status=user.status,
-        subscription_plan=user.subscription_plan,
-        email_verified=user.email_verified,
-        created_at=user.created_at,
-        last_login=user.last_login,
-        stats=user.stats
+        id=updated_user.id,
+        email=updated_user.email,
+        first_name=updated_user.first_name,
+        last_name=updated_user.last_name,
+        phone_number=updated_user.phone_number,
+        country=updated_user.country,
+        language=updated_user.language,
+        role=updated_user.role,
+        status=updated_user.status,
+        subscription_plan=updated_user.subscription_plan,
+        email_verified=updated_user.email_verified,
+        created_at=updated_user.created_at,
+        last_login=updated_user.last_login,
+        stats=updated_user.stats
     )
 
 @router.post("/login", response_model=LoginResponse)
