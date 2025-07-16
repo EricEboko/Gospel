@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from typing import Dict, Any, List
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 
 from models import UserRole, PlatformStats, ArtistStats, LabelStats
