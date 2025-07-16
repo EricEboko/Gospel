@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { AuthComponent } from './components/auth/AuthComponent';
-import { MainLayout } from './components/main/MainLayout';
+import { SimplifiedAuthComponent } from './components/auth/SimplifiedAuthComponent';
+import { FixedMainLayout } from './components/main/FixedMainLayout';
 import { getTranslations } from './utils/translations';
 
 const AppContent = () => {
@@ -25,14 +25,14 @@ const AppContent = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
       </div>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <AuthComponent 
+      <SimplifiedAuthComponent 
         t={t} 
         onLanguageChange={handleLanguageChange}
       />
@@ -40,7 +40,7 @@ const AppContent = () => {
   }
 
   return (
-    <MainLayout 
+    <FixedMainLayout 
       t={t} 
       language={language}
       onLanguageChange={handleLanguageChange}
