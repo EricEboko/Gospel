@@ -196,68 +196,126 @@ async def get_my_label_statistics(
     """Get statistics for current user's label"""
     return await get_label_statistics(current_user.id, current_user)
 
+@router.get("/label/{label_id}/dashboard")
+async def get_label_dashboard(
+    label_id: str,
+    current_user = Depends(get_current_active_user)
+):
+    """Get label dashboard data"""
+    # Check permissions
+    if (current_user.role == UserRole.LABEL_MANAGER and current_user.id != label_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this dashboard"
+        )
+    
+    if current_user.role not in [UserRole.LABEL_MANAGER, UserRole.SUPER_ADMIN]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view label dashboard"
+        )
+    
+    dashboard_data = await database.get_label_dashboard(label_id)
+    return dashboard_data
+
+@router.get("/label/{label_id}/earnings")
+async def get_label_earnings(
+    label_id: str,
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+    current_user = Depends(get_current_active_user)
+):
+    """Get label earnings data with date filtering"""
+    # Check permissions
+    if (current_user.role == UserRole.LABEL_MANAGER and current_user.id != label_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view earnings"
+        )
+    
+    if current_user.role not in [UserRole.LABEL_MANAGER, UserRole.SUPER_ADMIN]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view label earnings"
+        )
+    
+    earnings_data = await database.get_label_earnings(label_id, start_date, end_date)
+    return earnings_data
+
 @router.get("/platform")
 async def get_platform_statistics(
     current_user = Depends(require_role([UserRole.SUPER_ADMIN]))
 ):
     """Get platform-wide statistics (Super Admin only)"""
     # Get all users
-    all_users = await database.get_all_users(limit=10000)
+    users = await database.get_all_users()
+    active_users = [user for user in users if user.status == "active"]
     
     # Get all songs
-    all_songs = await database.get_all_songs(limit=10000)
+    songs = await database.get_all_songs()
+    total_streams = sum(song.play_count for song in songs)
     
-    # Get all artists
-    all_artists = await database.get_all_artists(limit=10000)
+    # Calculate revenue from streams
+    stream_revenue = total_streams * 0.004
     
-    # Calculate metrics
-    total_users = len(all_users)
-    active_users = len([u for u in all_users if u.status == "active"])
-    premium_users = len([u for u in all_users if u.subscription_plan != "free"])
+    # Get ad revenue
+    ad_stats = await database.get_ad_statistics()
+    ad_revenue = ad_stats.get("total_revenue", 0)
     
-    total_streams = sum(song.play_count for song in all_songs)
-    total_revenue = premium_users * 9.99  # Simplified revenue calculation
+    total_revenue = stream_revenue + ad_revenue
     
-    # Top genres
-    genre_stats = {}
-    for song in all_songs:
-        if song.genre:
-            genre_stats[song.genre] = genre_stats.get(song.genre, 0) + song.play_count
-    
-    top_genres = [
-        {"genre": genre, "streams": streams}
-        for genre, streams in sorted(genre_stats.items(), key=lambda x: x[1], reverse=True)
-    ][:10]
-    
-    # User growth (mock data)
+    # Get user growth data (mock)
     user_growth = {}
     for i in range(30):
         date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
-        user_growth[date] = max(0, total_users - i * 10)  # Mock decreasing growth
-    
-    # Revenue by subscription plan
-    revenue_by_plan = {
-        "Premium": len([u for u in all_users if u.subscription_plan == "premium"]) * 9.99,
-        "Family": len([u for u in all_users if u.subscription_plan == "family"]) * 14.99,
-        "Student": len([u for u in all_users if u.subscription_plan == "student"]) * 4.99,
-        "Free": 0
-    }
+        user_growth[date] = len(active_users) + (i * 2)  # Mock growth
     
     return {
-        "total_users": total_users,
-        "active_users": active_users,
-        "premium_users": premium_users,
-        "total_artists": len(all_artists),
-        "total_songs": len(all_songs),
+        "total_users": len(users),
+        "active_users": len(active_users),
         "total_streams": total_streams,
-        "total_revenue": total_revenue,
-        "top_genres": top_genres,
+        "revenue": total_revenue,
+        "stream_revenue": stream_revenue,
+        "ad_revenue": ad_revenue,
+        "total_songs": len(songs),
         "user_growth": user_growth,
-        "revenue_by_plan": revenue_by_plan,
-        "conversion_rate": (premium_users / max(total_users, 1)) * 100,
-        "churn_rate": 5.2,  # Mock churn rate
-        "engagement_rate": 72.5,  # Mock engagement rate
+        "top_genres": ["Gospel", "Contemporary Christian", "Praise & Worship"],
+        "platform_metrics": {
+            "avg_session_length": 45.2,
+            "bounce_rate": 12.8,
+            "conversion_rate": 3.5
+        }
     }
+
+@router.get("/dashboard")
+async def get_dashboard_statistics(
+    current_user = Depends(get_current_active_user)
+):
+    """Get dashboard statistics based on user role"""
+    if current_user.role == UserRole.SUPER_ADMIN:
+        return await get_platform_statistics(current_user)
+    elif current_user.role == UserRole.LABEL_MANAGER:
+        return await get_label_dashboard(current_user.id, current_user)
+    elif current_user.role == UserRole.ARTIST:
+        # Find artist record for this user
+        artists = await database.get_all_artists()
+        user_artist = None
+        for artist in artists:
+            if artist.user_id == current_user.id:
+                user_artist = artist
+                break
+        
+        if user_artist:
+            return await get_artist_dashboard(user_artist.id, current_user)
+        else:
+            return {"error": "Artist profile not found"}
+    else:
+        # Regular user - return basic stats
+        songs = await database.get_all_songs()
+        return {
+            "total_songs": len(songs),
+            "message": "Welcome to GospelSpot!"
+        }
 
 @router.get("/dashboard")
 async def get_dashboard_statistics(
