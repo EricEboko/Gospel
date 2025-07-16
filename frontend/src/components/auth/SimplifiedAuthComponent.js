@@ -127,7 +127,7 @@ export const SimplifiedAuthComponent = ({ t, onLanguageChange }) => {
     });
     setError('');
     setMessage('');
-    setStep(isLogin ? 1 : 2);
+    setStep(1);
   };
 
   const CriteriaItem = ({ met, text }) => (
