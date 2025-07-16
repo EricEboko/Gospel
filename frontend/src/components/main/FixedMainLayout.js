@@ -375,7 +375,14 @@ export const FixedMainLayout = ({ t, language, onLanguageChange }) => {
   );
 
   if (activeTab === 'admin' && (isSuperAdmin() || isLabelManager())) {
-    return <FixedAdminConsole t={t} language={language} onLanguageChange={onLanguageChange} />;
+    return (
+      <ImprovedAdminConsole 
+        t={t} 
+        language={language} 
+        onLanguageChange={onLanguageChange}
+        onReturnHome={() => setActiveTab('home')}
+      />
+    );
   }
 
   return (
