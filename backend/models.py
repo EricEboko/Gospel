@@ -148,6 +148,8 @@ class SongUpdate(BaseModel):
 class Song(SongBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     audio_file_base64: Optional[str] = None
+    audioUrl: Optional[str] = None  # For testing with external audio URLs
+    artist_name: Optional[str] = None  # Populated from artist lookup
     created_by: str  # User ID who created the song
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
