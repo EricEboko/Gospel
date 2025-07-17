@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { artistAPI, songAPI, statisticsAPI } from '../../utils/api';
+import { songAPI, artistAPI, statisticsAPI } from '../../utils/api';
 
-const StatsIcon = ({ className = "w-5 h-5" }) => (
-  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
-  </svg>
-);
-
+// Icons
 const MusicIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
     <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
   </svg>
 );
 
+const StatsIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+  </svg>
+);
+
 const DollarIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M7 15h2c0 1.08 1.37 2 3 2s3-.92 3-2c0-1.1-1.04-1.5-3.24-2.03C9.64 12.44 7 11.78 7 9c0-1.79 1.79-3 4-3s4 1.21 4 3h2c0-2.72-2.56-4.81-6-4.96V3h-2v1.04C6.56 4.19 5 6.28 5 9c0 3.73 3.6 4.47 6.36 5.27C13.76 14.77 15 15.08 15 17c0 1.08-1.37 2-3 2s-3-.92-3-2H7v2h2v1h2v-1c2.44-.15 6-2.24 6-4.96 0-3.73-3.6-4.47-6.36-5.27z"/>
+    <path d="M7 15h2c0 1.08.81 2 2 2h2c1.08 0 2-.81 2-2s-.81-2-2-2h-2c-1.08 0-2-.81-2-2s.81-2 2-2h2c1.08 0 2 .81 2 2h2c0-1.08-.81-2-2-2V9h-2v2c-1.08 0-2 .81-2 2s.81 2 2 2h2c1.08 0 2 .81 2 2s-.81 2-2 2h-2c-1.08 0-2-.81-2-2H7v2h2z"/>
+  </svg>
+);
+
+const PlayIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M8 5v14l11-7z"/>
   </svg>
 );
 
@@ -26,9 +33,21 @@ const PlusIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
-const BackIcon = ({ className = "w-5 h-5" }) => (
+const EditIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+  </svg>
+);
+
+const UserIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+);
+
+const CloseIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
   </svg>
 );
 
