@@ -380,21 +380,21 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
 
         <div className="mt-6 text-center">
           {isLogin ? (
-            <p className="text-gray-400">
+            <p className="text-gray-600">
               Don't have an account?{' '}
               <button
                 onClick={switchToRegister}
-                className="text-yellow-400 hover:text-yellow-300 font-medium"
+                className="text-primary-600 hover:text-primary-500 font-medium"
               >
                 Sign up
               </button>
             </p>
           ) : (
-            <p className="text-gray-400">
+            <p className="text-gray-600">
               Already have an account?{' '}
               <button
                 onClick={switchToLogin}
-                className="text-yellow-400 hover:text-yellow-300 font-medium"
+                className="text-primary-600 hover:text-primary-500 font-medium"
               >
                 Sign in
               </button>
