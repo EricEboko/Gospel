@@ -65,8 +65,15 @@ export const ModernMainLayout = ({ t, language, onLanguageChange }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
-  const [newPlaylistName, setNewPlaylistName] = useState('');
+  const [searchFilters, setSearchFilters] = useState({
+    category: '',
+    language: '',
+    country: '',
+    dateFrom: '',
+    dateTo: '',
+    type: ''
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     loadContent();
