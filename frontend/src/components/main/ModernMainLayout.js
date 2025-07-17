@@ -74,6 +74,8 @@ export const ModernMainLayout = ({ t, language, onLanguageChange }) => {
     type: ''
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
+  const [newPlaylistName, setNewPlaylistName] = useState('');
 
   useEffect(() => {
     loadContent();
