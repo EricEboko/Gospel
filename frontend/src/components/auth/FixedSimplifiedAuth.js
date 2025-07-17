@@ -255,7 +255,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Phone Number</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Phone Number</label>
               <input
                 type="tel"
                 name="phone_number"
