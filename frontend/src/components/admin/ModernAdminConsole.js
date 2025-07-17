@@ -259,7 +259,8 @@ export const ModernAdminConsole = ({ t, language, onLanguageChange, onReturnHome
     const { name, value, type, checked } = e.target;
     setState(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : 
+              (name === 'is_featuring' ? value === 'true' : value)
     }));
   };
 
