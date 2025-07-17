@@ -218,436 +218,489 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p className="text-primary-600 font-medium">Loading artist dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!artistProfile) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="bg-white rounded-xl shadow-modern p-8">
-            <MusicIcon className="w-16 h-16 text-primary-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Create Your Artist Profile</h2>
-            <p className="text-gray-600 mb-6">You need to create an artist profile to access your dashboard.</p>
-            <button
-              onClick={() => setShowEditProfile(true)}
-              className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg transition-colors"
-            >
-              Create Profile
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-    <div className="space-y-6">
-      <div className="bg-gradient-to-r from-blue-600/20 to-yellow-600/20 p-8 rounded-2xl border border-yellow-500/20">
-        <h1 className="text-3xl font-bold text-white mb-2">
-          Welcome, {artistProfile?.name || user?.first_name}!
-        </h1>
-        <p className="text-gray-300">Track your music performance and manage your songs</p>
-      </div>
-
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-xl text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Total Streams</h3>
-              <p className="text-3xl font-bold">{statistics.total_streams || 0}</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100">
+      {/* Header */}
+      <div className="bg-white shadow-modern border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <button
+                onClick={onReturnHome}
+                className="text-primary-600 hover:text-primary-800 transition-colors mr-4"
+              >
+                ← Back to Home
+              </button>
+              <h1 className="text-xl font-bold text-gray-800">Artist Dashboard</h1>
             </div>
-            <StatsIcon className="w-8 h-8 text-blue-200" />
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-green-600 to-green-800 p-6 rounded-xl text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Total Songs</h3>
-              <p className="text-3xl font-bold">{statistics.total_songs || 0}</p>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowEditProfile(true)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                <UserIcon className="w-5 h-5" />
+                <span>My Profile</span>
+              </button>
             </div>
-            <MusicIcon className="w-8 h-8 text-green-200" />
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-xl text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Monthly Listeners</h3>
-              <p className="text-3xl font-bold">{statistics.monthly_listeners || 0}</p>
-            </div>
-            <StatsIcon className="w-8 h-8 text-purple-200" />
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-yellow-600 to-yellow-800 p-6 rounded-xl text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Estimated Earnings</h3>
-              <p className="text-3xl font-bold">${((statistics.total_streams || 0) * 0.004).toFixed(2)}</p>
-            </div>
-            <DollarIcon className="w-8 h-8 text-yellow-200" />
           </div>
         </div>
       </div>
 
-      {/* Top Songs */}
-      {statistics.top_songs && statistics.top_songs.length > 0 && (
-        <div className="bg-gray-800 p-6 rounded-xl">
-          <h3 className="text-xl font-semibold text-white mb-4">Top Songs</h3>
-          <div className="space-y-3">
-            {statistics.top_songs.map((song, index) => (
-              <div key={song.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <span className="text-yellow-400 font-bold">#{index + 1}</span>
-                  <span className="text-white">{song.title}</span>
-                </div>
-                <span className="text-gray-400">{song.play_count} plays</span>
-              </div>
+      {/* Navigation Tabs */}
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            {[
+              { key: 'dashboard', label: 'Dashboard', icon: StatsIcon },
+              { key: 'songs', label: 'My Songs', icon: MusicIcon },
+              { key: 'earnings', label: 'Earnings', icon: DollarIcon },
+              { key: 'profile', label: 'Profile', icon: UserIcon }
+            ].map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center space-x-2 py-4 px-2 border-b-2 text-sm font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? 'border-primary-500 text-primary-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
             ))}
           </div>
         </div>
-      )}
-    </div>
-  );
-
-  const renderSongs = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">My Songs</h2>
-        <button
-          onClick={() => setShowAddSong(true)}
-          className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
-        >
-          <PlusIcon className="w-4 h-4" />
-          <span>Add Song</span>
-        </button>
       </div>
 
-      {songs.length === 0 ? (
-        <div className="text-center py-12">
-          <MusicIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-400">No songs yet. Add your first song!</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {songs.map((song) => (
-            <div key={song.id} className="bg-gray-800 p-6 rounded-xl">
-              <div className="w-full aspect-square bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg mb-4 overflow-hidden">
-                {song.image_base64 ? (
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-800">{error}</p>
+          </div>
+        )}
+
+        {activeTab === 'dashboard' && (
+          <div className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white rounded-xl shadow-card p-6">
+                <div className="flex items-center">
+                  <div className="p-3 bg-primary-100 rounded-lg">
+                    <MusicIcon className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-500">Total Songs</p>
+                    <p className="text-2xl font-bold text-gray-800">{dashboardData.total_songs || 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-card p-6">
+                <div className="flex items-center">
+                  <div className="p-3 bg-gold-100 rounded-lg">
+                    <PlayIcon className="w-6 h-6 text-gold-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-500">Total Streams</p>
+                    <p className="text-2xl font-bold text-gray-800">{dashboardData.total_streams || 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-card p-6">
+                <div className="flex items-center">
+                  <div className="p-3 bg-green-100 rounded-lg">
+                    <UserIcon className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-500">Monthly Listeners</p>
+                    <p className="text-2xl font-bold text-gray-800">{dashboardData.monthly_listeners || 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-card p-6">
+                <div className="flex items-center">
+                  <div className="p-3 bg-gold-100 rounded-lg">
+                    <DollarIcon className="w-6 h-6 text-gold-600" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-500">Total Revenue</p>
+                    <p className="text-2xl font-bold text-gray-800">${dashboardData.total_revenue || 0}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Top Songs */}
+            <div className="bg-white rounded-xl shadow-card p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Top Songs</h3>
+              <div className="space-y-3">
+                {dashboardData.top_songs && dashboardData.top_songs.length > 0 ? (
+                  dashboardData.top_songs.map((song, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                          <MusicIcon className="w-5 h-5 text-primary-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-800">{song.title}</p>
+                          <p className="text-sm text-gray-500">{song.streams} streams</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-500">#{index + 1}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No songs available</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'songs' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800">My Songs</h2>
+              <button
+                onClick={() => setShowAddSong(true)}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              >
+                <PlusIcon className="w-4 h-4" />
+                <span>Add New Song</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {songs.map(song => (
+                <div key={song.id} className="bg-white rounded-xl shadow-card p-6">
+                  {song.image_base64 && (
+                    <img
+                      src={song.image_base64}
+                      alt={song.title}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <h3 className="font-semibold text-gray-800 mb-2">{song.title}</h3>
+                  <p className="text-sm text-gray-500 mb-2">{song.album}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{song.play_count} plays</span>
+                    <button className="text-primary-600 hover:text-primary-800 transition-colors">
+                      <EditIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'earnings' && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-800">Earnings</h2>
+            
+            <div className="bg-white rounded-xl shadow-card p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Total Earnings</h3>
+              <div className="text-3xl font-bold text-gold-600 mb-4">
+                ${earnings.total_earnings || 0}
+              </div>
+              
+              {earnings.earnings && earnings.earnings.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="text-md font-medium text-gray-800 mb-3">Daily Earnings (Last 30 Days)</h4>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {earnings.earnings.map((earning, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-sm text-gray-600">{earning.date}</span>
+                        <span className="text-sm font-medium text-gray-800">${earning.amount}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'profile' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800">Profile</h2>
+              <button
+                onClick={() => setShowEditProfile(true)}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              >
+                <EditIcon className="w-4 h-4" />
+                <span>Edit Profile</span>
+              </button>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-card p-6">
+              <div className="flex items-center space-x-6 mb-6">
+                {artistProfile.image_base64 ? (
                   <img
-                    src={`data:image/jpeg;base64,${song.image_base64}`}
-                    alt={song.title}
-                    className="w-full h-full object-cover"
+                    src={artistProfile.image_base64}
+                    alt={artistProfile.name}
+                    className="w-24 h-24 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <MusicIcon className="w-12 h-12 text-black" />
+                  <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
+                    <UserIcon className="w-12 h-12 text-gray-400" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">{artistProfile.name}</h3>
+                  <p className="text-gray-600">{artistProfile.genre}</p>
+                  <p className="text-sm text-gray-500">{artistProfile.country}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium text-gray-800 mb-2">Bio</h4>
+                  <p className="text-gray-600">{artistProfile.bio || 'No bio available'}</p>
+                </div>
+                
+                {artistProfile.website && (
+                  <div>
+                    <h4 className="font-medium text-gray-800 mb-2">Website</h4>
+                    <a href={artistProfile.website} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 transition-colors">
+                      {artistProfile.website}
+                    </a>
                   </div>
                 )}
               </div>
-              <h3 className="text-white font-semibold mb-2">{song.title}</h3>
-              <p className="text-gray-400 text-sm mb-4">{song.genre || 'No genre'}</p>
-              <div className="flex justify-between text-sm text-gray-300">
-                <span>Plays: {song.play_count || 0}</span>
-                <span>Likes: {song.likes || 0}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-  const renderProfile = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white">Artist Profile</h2>
-      
-      <div className="bg-gray-800 p-6 rounded-xl">
-        <form onSubmit={handleUpdateProfile} className="space-y-4">
-          <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Stage Name</label>
-            <input
-              type="text"
-              name="name"
-              value={profileData.name}
-              onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Bio</label>
-            <textarea
-              name="bio"
-              value={profileData.bio}
-              onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-              rows={4}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              placeholder="Tell us about yourself..."
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Genre</label>
-              <input
-                type="text"
-                name="genre"
-                value={profileData.genre}
-                onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Country</label>
-              <input
-                type="text"
-                name="country"
-                value={profileData.country}
-                onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
             </div>
           </div>
-
-          <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Website</label>
-            <input
-              type="url"
-              name="website"
-              value={profileData.website}
-              onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              placeholder="https://your-website.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Social Links</label>
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="url"
-                name="social_links.facebook"
-                value={profileData.social_links.facebook}
-                onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                placeholder="Facebook URL"
-              />
-              <input
-                type="url"
-                name="social_links.instagram"
-                value={profileData.social_links.instagram}
-                onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                placeholder="Instagram URL"
-              />
-              <input
-                type="url"
-                name="social_links.twitter"
-                value={profileData.social_links.twitter}
-                onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                placeholder="Twitter URL"
-              />
-              <input
-                type="url"
-                name="social_links.youtube"
-                value={profileData.social_links.youtube}
-                onChange={(e) => handleInputChange(e, setProfileData, profileData)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                placeholder="YouTube URL"
-              />
-            </div>
-          </div>
-
-          <div className="flex space-x-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg disabled:opacity-50"
-            >
-              {loading ? 'Saving...' : 'Save Profile'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowProfile(false)}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-black/40 backdrop-blur-md border-r border-gray-700 min-h-screen">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-xl font-bold text-white">Artist Dashboard</h1>
-              <button
-                onClick={onReturnHome}
-                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-                title="Return to Home"
-              >
-                <BackIcon className="w-5 h-5 text-white" />
-              </button>
-            </div>
-            
-            <nav className="space-y-2">
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                  activeTab === 'dashboard' ? 'bg-yellow-600 text-white' : 'text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                Dashboard
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('songs')}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                  activeTab === 'songs' ? 'bg-yellow-600 text-white' : 'text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                My Songs
-              </button>
-              
-              <button
-                onClick={() => setShowProfile(true)}
-                className="w-full text-left px-4 py-2 rounded-lg transition-colors text-gray-300 hover:bg-gray-700"
-              >
-                Edit Profile
-              </button>
-            </nav>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          {/* Language Selector */}
-          <div className="flex justify-end mb-6">
-            <select
-              value={language}
-              onChange={(e) => onLanguageChange(e.target.value)}
-              className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            >
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="pt">Português</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="it">Italiano</option>
-              <option value="ru">Русский</option>
-            </select>
-          </div>
-
-          {error && (
-            <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-6">
-              {error}
-            </div>
-          )}
-
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
-            </div>
-          ) : (
-            <>
-              {!showProfile && activeTab === 'dashboard' && renderDashboard()}
-              {!showProfile && activeTab === 'songs' && renderSongs()}
-              {showProfile && renderProfile()}
-            </>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Add Song Modal */}
       {showAddSong && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-white mb-4">Add New Song</h3>
-            <form onSubmit={handleAddSong} className="space-y-4">
-              <input
-                type="text"
-                name="title"
-                placeholder="Song Title"
-                value={newSong.title}
-                onChange={(e) => handleInputChange(e, setNewSong, newSong)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                required
-              />
-              <input
-                type="text"
-                name="album"
-                placeholder="Album (optional)"
-                value={newSong.album}
-                onChange={(e) => handleInputChange(e, setNewSong, newSong)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input
-                type="text"
-                name="genre"
-                placeholder="Genre"
-                value={newSong.genre}
-                onChange={(e) => handleInputChange(e, setNewSong, newSong)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input
-                type="text"
-                name="duration"
-                placeholder="Duration (e.g., 3:45)"
-                value={newSong.duration}
-                onChange={(e) => handleInputChange(e, setNewSong, newSong)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <textarea
-                name="lyrics"
-                placeholder="Song lyrics (optional)"
-                value={newSong.lyrics}
-                onChange={(e) => handleInputChange(e, setNewSong, newSong)}
-                rows={4}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input
-                type="url"
-                name="youtube_url"
-                placeholder="YouTube URL (optional)"
-                value={newSong.youtube_url}
-                onChange={(e) => handleInputChange(e, setNewSong, newSong)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <div className="flex space-x-3">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">Add New Song</h3>
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg disabled:opacity-50"
-                >
-                  {loading ? 'Adding...' : 'Add Song'}
-                </button>
-                <button
-                  type="button"
                   onClick={() => setShowAddSong(false)}
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg"
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
                 >
-                  Cancel
+                  <CloseIcon className="w-5 h-5" />
                 </button>
               </div>
-            </form>
+              
+              <form onSubmit={handleAddSong} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={newSong.title}
+                    onChange={(e) => setNewSong({...newSong, title: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Album</label>
+                  <input
+                    type="text"
+                    value={newSong.album}
+                    onChange={(e) => setNewSong({...newSong, album: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+                  <input
+                    type="text"
+                    value={newSong.genre}
+                    onChange={(e) => setNewSong({...newSong, genre: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration (e.g., 3:45)</label>
+                  <input
+                    type="text"
+                    value={newSong.duration}
+                    onChange={(e) => setNewSong({...newSong, duration: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">YouTube URL</label>
+                  <input
+                    type="url"
+                    value={newSong.youtube_url}
+                    onChange={(e) => setNewSong({...newSong, youtube_url: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Song Cover</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e, 'song_image')}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Audio File
+                    <span className="text-primary-600 ml-2">(MP3 or WAV format only)</span>
+                  </label>
+                  <input
+                    type="file"
+                    accept="audio/mp3,audio/wav,.mp3,.wav"
+                    onChange={(e) => handleFileUpload(e, 'audio_file')}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Please upload your song file in MP3 or WAV format</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Lyrics</label>
+                  <textarea
+                    value={newSong.lyrics}
+                    onChange={(e) => setNewSong({...newSong, lyrics: e.target.value})}
+                    rows={4}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-lg font-medium disabled:opacity-50 transition-colors"
+                  >
+                    {loading ? 'Adding...' : 'Add Song'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSong(false)}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal - Only show when explicitly requested */}
+      {showEditProfile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {artistProfile ? 'Edit Profile' : 'Create Artist Profile'}
+                </h3>
+                <button
+                  onClick={() => setShowEditProfile(false)}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <CloseIcon className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <form onSubmit={handleUpdateProfile} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Artist Name</label>
+                  <input
+                    type="text"
+                    value={profileData.name}
+                    onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                  <textarea
+                    value={profileData.bio}
+                    onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+                    rows={4}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+                  <input
+                    type="text"
+                    value={profileData.genre}
+                    onChange={(e) => setProfileData({...profileData, genre: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                  <input
+                    type="text"
+                    value={profileData.country}
+                    onChange={(e) => setProfileData({...profileData, country: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                  <input
+                    type="url"
+                    value={profileData.website}
+                    onChange={(e) => setProfileData({...profileData, website: e.target.value})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e, 'profile_image')}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-lg font-medium disabled:opacity-50 transition-colors"
+                  >
+                    {loading ? 'Saving...' : 'Save Profile'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowEditProfile(false)}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
