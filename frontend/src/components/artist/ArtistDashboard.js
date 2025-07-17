@@ -54,13 +54,14 @@ const CloseIcon = ({ className = "w-5 h-5" }) => (
 export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome }) => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [artistProfile, setArtistProfile] = useState(null);
+  const [dashboardData, setDashboardData] = useState({});
   const [songs, setSongs] = useState([]);
-  const [statistics, setStatistics] = useState({});
+  const [artistProfile, setArtistProfile] = useState(null);
+  const [earnings, setEarnings] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showAddSong, setShowAddSong] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   const [newSong, setNewSong] = useState({
     title: '',
@@ -70,9 +71,7 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
     lyrics: '',
     youtube_url: '',
     image_base64: '',
-    audio_file_base64: '',
-    language: 'en',
-    country: ''
+    audio_file_base64: ''
   });
 
   const [profileData, setProfileData] = useState({
@@ -81,12 +80,7 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
     genre: '',
     country: '',
     website: '',
-    social_links: {
-      facebook: '',
-      instagram: '',
-      twitter: '',
-      youtube: ''
-    }
+    image_base64: ''
   });
 
   useEffect(() => {
