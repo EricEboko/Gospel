@@ -343,7 +343,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Confirm Password</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Confirm Password</label>
               <input
                 type="password"
                 name="confirmPassword"
