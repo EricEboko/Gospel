@@ -321,7 +321,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
         {!isLogin && step === 3 && (
           <form onSubmit={handleRegisterStep2} className="space-y-4">
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Password</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Password</label>
               <input
                 type="password"
                 name="password"
