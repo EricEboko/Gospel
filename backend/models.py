@@ -84,6 +84,12 @@ class UserResponse(BaseModel):
 # Artist Models
 class ArtistBase(BaseModel):
     name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    stage_name: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
     bio: Optional[str] = None
     genre: Optional[str] = None
     country: Optional[str] = None
@@ -96,8 +102,18 @@ class ArtistCreate(ArtistBase):
     
 class ArtistUpdate(BaseModel):
     name: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    stage_name: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
     bio: Optional[str] = None
     genre: Optional[str] = None
+    country: Optional[str] = None
+    image_base64: Optional[str] = None
+    website: Optional[str] = None
+    social_links: Optional[Dict[str, str]] = None
     country: Optional[str] = None
     image_base64: Optional[str] = None
     website: Optional[str] = None
