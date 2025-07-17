@@ -3,7 +3,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { FixedSimplifiedAuth } from './components/auth/FixedSimplifiedAuth';
-import { FixedMainLayout } from './components/main/FixedMainLayout';
+import { ModernMainLayout } from './components/main/ModernMainLayout';
 import { getTranslations } from './utils/translations';
 
 const AppContent = () => {
