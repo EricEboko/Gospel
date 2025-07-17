@@ -242,7 +242,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
         {!isLogin && step === 2 && (
           <form onSubmit={handleRegisterStep1} className="space-y-4">
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">Email</label>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
               <input
                 type="email"
                 name="email"
