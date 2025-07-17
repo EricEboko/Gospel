@@ -294,52 +294,203 @@ export const ModernMainLayout = ({ t, language, onLanguageChange }) => {
 
   const renderSearch = () => (
     <div className="space-y-6">
+      {/* Advanced Search Bar */}
       <div className="bg-white rounded-xl shadow-card p-6">
-        <div className="relative">
-          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder={t.searchPlaceholder || "Search for songs, artists..."}
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          />
+        <div className="space-y-4">
+          {/* Main Search */}
+          <div className="relative">
+            <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search artists, songs, albums, or release date..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Filter Toggle */}
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center space-x-2 text-primary-600 hover:text-primary-800 transition-colors"
+            >
+              <FilterIcon className="w-4 h-4" />
+              <span>Advanced Filters</span>
+            </button>
+            {(searchFilters.category || searchFilters.language || searchFilters.country || searchFilters.type) && (
+              <button
+                onClick={() => setSearchFilters({ category: '', language: '', country: '', dateFrom: '', dateTo: '', type: '' })}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+
+          {/* Advanced Filters */}
+          {showFilters && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  value={searchFilters.category}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="">All Categories</option>
+                  <option value="Gospel">Gospel</option>
+                  <option value="Contemporary Christian">Contemporary Christian</option>
+                  <option value="Praise & Worship">Praise & Worship</option>
+                  <option value="Celtic Gospel">Celtic Gospel</option>
+                  <option value="Hip Hop Gospel">Hip Hop Gospel</option>
+                  <option value="Country Gospel">Country Gospel</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                <select
+                  value={searchFilters.language}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, language: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="">All Languages</option>
+                  <option value="English">English</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="Portuguese">Portuguese</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Italian">Italian</option>
+                  <option value="Korean">Korean</option>
+                  <option value="Chinese">Chinese</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                <select
+                  value={searchFilters.country}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, country: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="">All Countries</option>
+                  <option value="USA">United States</option>
+                  <option value="Brazil">Brazil</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="Nigeria">Nigeria</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Germany">Germany</option>
+                  <option value="France">France</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select
+                  value={searchFilters.type}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, type: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                >
+                  <option value="">All Types</option>
+                  <option value="Single">Single</option>
+                  <option value="EP">EP</option>
+                  <option value="Album">Album</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+                <input
+                  type="date"
+                  value={searchFilters.dateFrom}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+                <input
+                  type="date"
+                  value={searchFilters.dateTo}
+                  onChange={(e) => setSearchFilters(prev => ({ ...prev, dateTo: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {searchResults.length > 0 && (
+      {/* Search Results */}
+      {(searchQuery || Object.values(searchFilters).some(filter => filter)) && (
         <div className="bg-white rounded-xl shadow-card p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
-            {t.searchResults || "Search results for"} "{searchQuery}"
+            Search Results {searchQuery && `for "${searchQuery}"`}
           </h2>
-          <div className="space-y-3">
-            {searchResults.map((song) => (
-              <div
-                key={song.id}
-                className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer flex items-center space-x-4"
-                onClick={() => handlePlaySong(song)}
+          
+          {searchResults.length > 0 ? (
+            <div className="space-y-3">
+              {searchResults.map((song) => (
+                <div
+                  key={song.id}
+                  className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer flex items-center space-x-4"
+                  onClick={() => handlePlaySong(song)}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex-shrink-0 overflow-hidden">
+                    {song.image_base64 ? (
+                      <img
+                        src={song.image_base64}
+                        alt={song.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <MusicIcon className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-gray-800 font-medium">{song.title}</h3>
+                    <p className="text-gray-500 text-sm">{song.artist_name || 'Unknown Artist'}</p>
+                    <p className="text-gray-400 text-xs">{song.album} • {song.genre}</p>
+                  </div>
+                  <div className="text-right text-sm text-gray-500">
+                    <p>{song.duration}</p>
+                    <p>{song.play_count} plays</p>
+                  </div>
+                  <button className="p-2 rounded-full bg-gold-500 hover:bg-gold-600 text-white transition-colors">
+                    <PlayIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-500 mb-2">No results found</h3>
+              <p className="text-gray-400">Try adjusting your search terms or filters</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Default Search Suggestions */}
+      {!searchQuery && !Object.values(searchFilters).some(filter => filter) && (
+        <div className="bg-white rounded-xl shadow-card p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Discover Music</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {['Gospel', 'Contemporary Christian', 'Praise & Worship', 'Celtic Gospel'].map(genre => (
+              <button
+                key={genre}
+                onClick={() => setSearchFilters(prev => ({ ...prev, category: genre }))}
+                className="p-4 bg-gradient-to-r from-primary-50 to-gold-50 rounded-lg hover:from-primary-100 hover:to-gold-100 transition-colors text-center"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex-shrink-0 overflow-hidden">
-                  {song.image_base64 ? (
-                    <img
-                      src={song.image_base64}
-                      alt={song.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <MusicIcon className="w-6 h-6 text-white" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-gray-800 font-medium">{song.title}</h3>
-                  <p className="text-gray-500 text-sm">{song.artist_name || 'Unknown Artist'}</p>
-                </div>
-                <button className="p-2 rounded-full bg-gold-500 hover:bg-gold-600 text-white transition-colors">
-                  <PlayIcon className="w-4 h-4" />
-                </button>
-              </div>
+                <MusicIcon className="w-8 h-8 text-primary-600 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-800">{genre}</p>
+              </button>
             ))}
           </div>
         </div>
