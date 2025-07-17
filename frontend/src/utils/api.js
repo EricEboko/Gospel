@@ -256,8 +256,36 @@ export const statisticsAPI = {
     return response.data;
   },
 
+  getArtistDashboard: async (artistId) => {
+    const response = await api.get(`/statistics/artist/${artistId}/dashboard`);
+    return response.data;
+  },
+
+  getArtistEarnings: async (artistId, startDate = null, endDate = null) => {
+    const params = {};
+    if (startDate) params.start_date = startDate;
+    if (endDate) params.end_date = endDate;
+    
+    const response = await api.get(`/statistics/artist/${artistId}/earnings`, { params });
+    return response.data;
+  },
+
   getLabelStatistics: async (labelId) => {
     const response = await api.get(`/statistics/label/${labelId}`);
+    return response.data;
+  },
+
+  getLabelDashboard: async (labelId) => {
+    const response = await api.get(`/statistics/label/${labelId}/dashboard`);
+    return response.data;
+  },
+
+  getLabelEarnings: async (labelId, startDate = null, endDate = null) => {
+    const params = {};
+    if (startDate) params.start_date = startDate;
+    if (endDate) params.end_date = endDate;
+    
+    const response = await api.get(`/statistics/label/${labelId}/earnings`, { params });
     return response.data;
   },
 
@@ -278,6 +306,57 @@ export const statisticsAPI = {
 
   getAdsRevenue: async () => {
     const response = await api.get('/statistics/revenue/ads');
+    return response.data;
+  }
+};
+
+// Advertisement APIs
+export const advertisementAPI = {
+  getAdvertisements: async (params = {}) => {
+    const response = await api.get('/advertisements', { params });
+    return response.data;
+  },
+
+  createAdvertisement: async (adData) => {
+    const response = await api.post('/advertisements', adData);
+    return response.data;
+  },
+
+  getAdvertisement: async (adId) => {
+    const response = await api.get(`/advertisements/${adId}`);
+    return response.data;
+  },
+
+  updateAdvertisement: async (adId, updateData) => {
+    const response = await api.put(`/advertisements/${adId}`, updateData);
+    return response.data;
+  },
+
+  deleteAdvertisement: async (adId) => {
+    const response = await api.delete(`/advertisements/${adId}`);
+    return response.data;
+  },
+
+  getAdSettings: async () => {
+    const response = await api.get('/advertisements/settings/current');
+    return response.data;
+  },
+
+  updateAdSettings: async (settingsData) => {
+    const response = await api.put('/advertisements/settings/', settingsData);
+    return response.data;
+  },
+
+  recordAdImpression: async (adId, watchedDuration, wasSkipped = false) => {
+    const response = await api.post(`/advertisements/impressions/${adId}`, {
+      watched_duration: watchedDuration,
+      was_skipped: wasSkipped
+    });
+    return response.data;
+  },
+
+  getAdStatistics: async () => {
+    const response = await api.get('/advertisements/statistics/');
     return response.data;
   }
 };
