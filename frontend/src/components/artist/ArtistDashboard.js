@@ -87,40 +87,44 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
     loadArtistData();
   }, []);
 
+  // Close modals when navigating between tabs
+  useEffect(() => {
+    setShowEditProfile(false);
+  }, [activeTab]);
+
   const loadArtistData = async () => {
     setLoading(true);
     setError('');
     
     try {
       // Find artist profile for current user
-      const allArtists = await artistAPI.getArtists();
-      const userArtist = allArtists.find(artist => artist.user_id === user.id);
+      const artists = await artistAPI.getArtists();
+      const userArtist = artists.find(artist => artist.user_id === user.id);
       
       if (userArtist) {
         setArtistProfile(userArtist);
+        
+        // Load dashboard data
+        const dashboard = await statisticsAPI.getArtistDashboard(userArtist.id);
+        setDashboardData(dashboard);
+        
+        // Load songs
+        const artistSongs = await songAPI.getSongsByArtist(userArtist.id);
+        setSongs(artistSongs);
+        
+        // Load earnings
+        const earningsData = await statisticsAPI.getArtistEarnings(userArtist.id);
+        setEarnings(earningsData);
+        
+        // Set profile data
         setProfileData({
           name: userArtist.name || '',
           bio: userArtist.bio || '',
           genre: userArtist.genre || '',
           country: userArtist.country || '',
           website: userArtist.website || '',
-          social_links: userArtist.social_links || {
-            facebook: '',
-            instagram: '',
-            twitter: '',
-            youtube: ''
-          }
+          image_base64: userArtist.image_base64 || ''
         });
-        
-        // Load songs for this artist
-        const artistSongs = await songAPI.getSongsByArtist(userArtist.id);
-        setSongs(Array.isArray(artistSongs) ? artistSongs : []);
-        
-        // Load statistics
-        const stats = await statisticsAPI.getArtistStatistics(userArtist.id);
-        setStatistics(stats);
-      } else {
-        setError('Artist profile not found. Please contact support.');
       }
     } catch (error) {
       console.error('Error loading artist data:', error);
