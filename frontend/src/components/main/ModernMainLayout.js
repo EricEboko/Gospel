@@ -190,9 +190,16 @@ export const ModernMainLayout = ({ t, language, onLanguageChange }) => {
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
           Welcome to GospelSpot
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-600 mb-6">
           Discover and enjoy Christian music from around the world
         </p>
+        <button
+          onClick={() => setShowCreatePlaylist(true)}
+          className="bg-gold-500 hover:bg-gold-600 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors mx-auto"
+        >
+          <PlusIcon className="w-5 h-5" />
+          <span>Create Playlist</span>
+        </button>
       </div>
 
       {/* Quick Actions for Artists */}
