@@ -1079,13 +1079,13 @@ export const ModernAdminConsole = ({ t, language, onLanguageChange, onReturnHome
         )}
       </div>
 
-      {/* Profile Modal */}
+      {/* Profile Modal - Editable */}
       {showProfile && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">My Profile</h3>
+                <h3 className="text-lg font-semibold text-gray-800">Edit My Profile</h3>
                 <button
                   onClick={() => setShowProfile(false)}
                   className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -1094,30 +1094,123 @@ export const ModernAdminConsole = ({ t, language, onLanguageChange, onReturnHome
                 </button>
               </div>
               
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-600 font-bold text-xl">
-                      {user?.first_name?.[0] || user?.email?.[0] || 'U'}
-                    </span>
-                  </div>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                // Handle profile update
+                setShowProfile(false);
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                  <input
+                    type="text"
+                    value={profileData.first_name || user?.first_name || ''}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, first_name: e.target.value }))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <input
+                    type="text"
+                    value={profileData.last_name || user?.last_name || ''}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, last_name: e.target.value }))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={profileData.email || user?.email || ''}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={profileData.phone_number || user?.phone_number || ''}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, phone_number: e.target.value }))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                  <input
+                    type="text"
+                    value={profileData.country || user?.country || ''}
+                    onChange={(e) => setProfileData(prev => ({ ...prev, country: e.target.value }))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                {isLabelManager() && (
                   <div>
-                    <h4 className="font-medium text-gray-800">{user?.first_name} {user?.last_name}</h4>
-                    <p className="text-sm text-gray-500">{user?.email}</p>
-                    <p className="text-sm text-gray-500">{user?.role?.replace('_', ' ')}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                    <input
+                      type="text"
+                      value={profileData.company_name || ''}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, company_name: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                  </div>
+                )}
+
+                <div className="border-t pt-4">
+                  <h5 className="font-medium text-gray-800 mb-2">Change Password</h5>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                      <input
+                        type="password"
+                        value={profileData.current_password || ''}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, current_password: e.target.value }))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                      <input
+                        type="password"
+                        value={profileData.new_password || ''}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, new_password: e.target.value }))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                      <input
+                        type="password"
+                        value={profileData.confirm_password || ''}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, confirm_password: e.target.value }))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-t pt-4">
-                  <h5 className="font-medium text-gray-800 mb-2">Account Details</h5>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-500">Phone:</span> {user?.phone_number || 'Not provided'}</p>
-                    <p><span className="text-gray-500">Country:</span> {user?.country || 'Not provided'}</p>
-                    <p><span className="text-gray-500">Status:</span> {user?.status}</p>
-                    <p><span className="text-gray-500">Member since:</span> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}</p>
-                  </div>
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-lg font-medium disabled:opacity-50 transition-colors"
+                  >
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowProfile(false)}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
