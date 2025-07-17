@@ -142,7 +142,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
   };
 
   const CriteriaItem = ({ met, text }) => (
-    <div className={`flex items-center space-x-2 ${met ? 'text-green-400' : 'text-red-400'}`}>
+    <div className={`flex items-center space-x-2 ${met ? 'text-green-600' : 'text-red-600'}`}>
       <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
         met ? 'bg-green-500 border-green-500' : 'border-red-400'
       }`}>
