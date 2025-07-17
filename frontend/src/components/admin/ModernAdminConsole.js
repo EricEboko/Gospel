@@ -195,6 +195,17 @@ export const ModernAdminConsole = ({ t, language, onLanguageChange, onReturnHome
     loadDashboardData();
   }, [activeTab]);
 
+  // Close all modals when navigating between tabs
+  useEffect(() => {
+    setShowProfile(false);
+    setShowCreateUser(false);
+    setShowCreateArtist(false);
+    setShowCreateSong(false);
+    setShowCreateAd(false);
+    setShowCreateManager(false);
+    setShowSettings(false);
+  }, [activeTab]);
+
   useEffect(() => {
     // Close profile modal when navigating
     setShowProfile(false);
