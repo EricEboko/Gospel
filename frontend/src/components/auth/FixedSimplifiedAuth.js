@@ -269,7 +269,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">First Name</label>
+                <label className="block text-gray-700 text-sm font-medium mb-2">First Name</label>
                 <input
                   type="text"
                   name="first_name"
