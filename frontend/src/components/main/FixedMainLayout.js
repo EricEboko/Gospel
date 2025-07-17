@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { songAPI, artistAPI } from '../../utils/api';
 import { FixedAudioPlayer } from '../audio/FixedAudioPlayer';
 import { ImprovedAdminConsole } from '../admin/ImprovedAdminConsole';
+import { ArtistDashboard } from '../artist/ArtistDashboard';
 
 // Icons
 const HomeIcon = ({ className = "w-5 h-5" }) => (
