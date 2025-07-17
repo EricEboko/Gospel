@@ -51,6 +51,12 @@ const StatsIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
+const CrownIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2.7-2h8.6l.9-5.4-2.1 1.4L12 8l-3.1 2-2.1-1.4L7.7 14z"/>
+  </svg>
+);
+
 const MoneyIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
     <path d="M7 15h2c0 1.08.81 2 2 2h2c1.08 0 2-.81 2-2s-.81-2-2-2h-2c-1.08 0-2-.81-2-2s.81-2 2-2h2c1.08 0 2 .81 2 2h2c0-1.08-.81-2-2-2V9h-2v2c-1.08 0-2 .81-2 2s.81 2 2 2h2c1.08 0 2 .81 2 2s-.81 2-2 2h-2c-1.08 0-2-.81-2-2H7v2h2z"/>
