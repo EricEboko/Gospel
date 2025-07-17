@@ -134,32 +134,11 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
     }
   };
 
-  const handleInputChange = (e, setState, state) => {
-    const { name, value } = e.target;
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setState(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: value
-        }
-      }));
-    } else {
-      setState(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
-
   const handleAddSong = async (e) => {
     e.preventDefault();
     if (!artistProfile) return;
     
     setLoading(true);
-    setError('');
-    
     try {
       const songData = {
         ...newSong,
@@ -176,15 +155,15 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
         lyrics: '',
         youtube_url: '',
         image_base64: '',
-        audio_file_base64: '',
-        language: 'en',
-        country: ''
+        audio_file_base64: ''
       });
       
-      // Reload data
-      loadArtistData();
+      // Reload songs
+      const updatedSongs = await songAPI.getSongsByArtist(artistProfile.id);
+      setSongs(updatedSongs);
     } catch (error) {
-      setError('Failed to add song: ' + (error.response?.data?.detail || error.message));
+      console.error('Error adding song:', error);
+      setError('Failed to add song');
     } finally {
       setLoading(false);
     }
@@ -192,19 +171,50 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    if (!artistProfile) return;
+    if (!artistProfile) {
+      // Create new artist profile
+      try {
+        const newArtist = await artistAPI.createArtist({
+          ...profileData,
+          user_id: user.id
+        });
+        setArtistProfile(newArtist);
+        setShowEditProfile(false);
+        await loadArtistData();
+      } catch (error) {
+        console.error('Error creating artist profile:', error);
+        setError('Failed to create artist profile');
+      }
+      return;
+    }
     
     setLoading(true);
-    setError('');
-    
     try {
       await artistAPI.updateArtist(artistProfile.id, profileData);
-      setShowProfile(false);
-      loadArtistData();
+      setShowEditProfile(false);
+      await loadArtistData();
     } catch (error) {
-      setError('Failed to update profile: ' + (error.response?.data?.detail || error.message));
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileUpload = (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (field === 'profile_image') {
+          setProfileData(prev => ({ ...prev, image_base64: reader.result }));
+        } else if (field === 'song_image') {
+          setNewSong(prev => ({ ...prev, image_base64: reader.result }));
+        } else if (field === 'audio_file') {
+          setNewSong(prev => ({ ...prev, audio_file_base64: reader.result }));
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
