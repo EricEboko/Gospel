@@ -24,8 +24,8 @@ const AppContent = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-gold-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     );
   }
@@ -40,7 +40,7 @@ const AppContent = () => {
   }
 
   return (
-    <FixedMainLayout 
+    <ModernMainLayout 
       t={t} 
       language={language}
       onLanguageChange={handleLanguageChange}
