@@ -43,7 +43,7 @@ const PlusIcon = ({ className = "w-5 h-5" }) => (
 );
 
 export const FixedMainLayout = ({ t, language, onLanguageChange }) => {
-  const { user, logout, isSuperAdmin, isLabelManager } = useAuth();
+  const { user, logout, isSuperAdmin, isLabelManager, isArtist } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [currentSong, setCurrentSong] = useState(null);
   const [songs, setSongs] = useState([]);
@@ -55,6 +55,8 @@ export const FixedMainLayout = ({ t, language, onLanguageChange }) => {
   const [error, setError] = useState('');
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
+  const [showArtistDashboard, setShowArtistDashboard] = useState(false);
+  const [showAdminConsole, setShowAdminConsole] = useState(false);
 
   useEffect(() => {
     loadContent();
