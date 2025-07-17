@@ -218,7 +218,36 @@ export const ArtistDashboard = ({ t, language, onLanguageChange, onReturnHome })
     }
   };
 
-  const renderDashboard = () => (
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+          <p className="text-primary-600 font-medium">Loading artist dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!artistProfile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-primary-100 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="bg-white rounded-xl shadow-modern p-8">
+            <MusicIcon className="w-16 h-16 text-primary-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Create Your Artist Profile</h2>
+            <p className="text-gray-600 mb-6">You need to create an artist profile to access your dashboard.</p>
+            <button
+              onClick={() => setShowEditProfile(true)}
+              className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg transition-colors"
+            >
+              Create Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-blue-600/20 to-yellow-600/20 p-8 rounded-2xl border border-yellow-500/20">
         <h1 className="text-3xl font-bold text-white mb-2">
