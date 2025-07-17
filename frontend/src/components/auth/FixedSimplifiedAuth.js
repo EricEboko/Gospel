@@ -153,8 +153,8 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center p-4">
-      <div className="bg-black/40 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-purple-500/20 w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 flex items-center justify-center p-4">
+      <div className="bg-white/95 backdrop-blur-md p-8 rounded-2xl shadow-modern border border-white/20 w-full max-w-md">
         
         {/* Language Selector */}
         <div className="flex justify-end mb-6">
@@ -164,7 +164,7 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
               setFormData(prev => ({ ...prev, language: e.target.value }));
               onLanguageChange(e.target.value);
             }}
-            className="bg-white/10 border border-purple-500/30 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="bg-white border border-gray-300 rounded-lg px-3 py-1 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="en">English</option>
             <option value="es">Español</option>
@@ -178,23 +178,23 @@ export const FixedSimplifiedAuth = ({ t, onLanguageChange }) => {
 
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-gold-500 to-gold-600 rounded-full flex items-center justify-center">
             <span className="text-2xl">🎵</span>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">GospelSpot</h1>
-          <p className="text-gray-300">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">GospelSpot</h1>
+          <p className="text-gray-600">
             {isLogin ? t.login : (step === 2 ? 'Create Account' : 'Set Password')}
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
             {error}
           </div>
         )}
 
         {message && (
-          <div className="bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4">
             {message}
           </div>
         )}
