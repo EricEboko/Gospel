@@ -54,6 +54,18 @@ const MusicIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
+const FilterIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+  </svg>
+);
+
+const CalendarIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+  </svg>
+);
+
 export const ModernMainLayout = ({ t, language, onLanguageChange }) => {
   const { user, logout, isSuperAdmin, isLabelManager, isArtist } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
